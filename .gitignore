@@ -4,6 +4,9 @@
 # User uploaded files
 uploads/
 
+# Testing stuff
+django_stuff/
+
 # Development database
 db.sqlite3
 
