@@ -1,0 +1,16 @@
+.thumbnail {
+  background-size: cover;
+  width: 113px;
+  height: 80px;
+  margin-right: 5px; }
+
+form {
+  margin-top: 150px;
+  margin-bottom: 150px; }
+
+#info {
+  margin-top: 30px; }
+  #info dd {
+    margin-left: 0; }
+
+/*# sourceMappingURL=../../../../../../static/css/dietwater.css.map */

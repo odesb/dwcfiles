@@ -1,0 +1,23 @@
+- extends 'base.haml'
+- block main
+  .column.is-7.is-offset-1
+    - if 'image' in userfile.mime_type 
+      %figure.image
+        %img{:src => '/media/{{ userfile.actualfile.name }}'}
+    - elif 'video' in userfile.mime_type
+      %video{:controls}
+        %source{:src => '/media/{{ userfile.actualfile.name }}', :type => 'video/webm'}
+  .column.is-3
+    .content#info
+      %h3.title= userfile.title 
+      %dl
+        %dt.label File size
+        -# Maybe shouldn't use label class for <dt>.. not sure
+        %dd= filesize
+      .field
+        %label.label Direct link
+        %p.control.has-icons-left
+          %input.input.is-success{:type => 'text', :value => 'dietwater.com/media/{{ userfile.actualfile.name }}'}
+          %span.icon.is-left
+            %i.fa.fa-link
+

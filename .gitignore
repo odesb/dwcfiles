@@ -1,0 +1,14 @@
+# Vim swap files
+*.swp
+
+# User uploaded files
+uploads/
+
+# Development database
+db.sqlite3
+
+# Virtual environment
+virtenv/
+
+# Site settings (sensitive information)
+dwcfiles/settings.py
