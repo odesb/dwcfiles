@@ -15,3 +15,6 @@ virtenv/
 
 # Site settings (sensitive information)
 dwcfiles/settings.py
+
+db/
+__pycache__/
