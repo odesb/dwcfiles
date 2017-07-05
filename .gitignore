@@ -1,7 +1,8 @@
 # Vim swap files
 *.swp
 
-# User uploaded files
+# Development folders
+db/
 uploads/
 
 # Testing stuff
@@ -12,6 +13,11 @@ db.sqlite3
 
 # Virtual environment
 virtenv/
+__pycache__/
+
+# Old django stuff
+## To delete soon
+django_stuff/
 
 # Site settings (sensitive information)
 dwcfiles/settings.py

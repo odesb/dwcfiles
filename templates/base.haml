@@ -1,22 +1,23 @@
-!!!
+<!doctype html>
 %html
   %head
-    %meta{:charset => 'utf-8'}
-    %title Dietwater File Hosting
-    - load static
-    - load sass_tags
-    %link{:rel => 'stylesheet', :type => 'text/css', :href => "{% static 'css/bulma.css' %}"}
-    %link{:rel => 'stylesheet', :type => 'text/css', :href => "{% static 'font-awesome/css/font-awesome.css' %}"}
-    %link{:rel => 'stylesheet', :type => 'text/css', :href => "{% sass_src 'css/dietwater.scss' %}"}
+    %meta charset='utf-8'
+    %title 
+      Dietwater File Hosting
+    %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='css/bulma.css') }}" 
+    %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='font-awesome/css/font-awesome.css')}}"
+    %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='css/dietwater.css') }}"
   %body
     %header.section
       .container
         .columns
           .column
             %h1.title 
-              %a{:href => '/'}Dietwater File Hosting
-            %h2.subtitle Keeping your memes safe since 2017
+              %a href = '/'
+                Dietwater File Hosting
+            %h2.subtitle 
+              Keeping your memes safe since 2017
     %section.section
       .container
         .columns
-          - block main
+          -block main
