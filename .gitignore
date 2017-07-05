@@ -4,14 +4,6 @@
 # Development folders
 db/
 uploads/
-
-# Testing stuff
-django_stuff/
-
-# Development database
-db.sqlite3
-
-# Virtual environment
 virtenv/
 __pycache__/
 
@@ -19,8 +11,3 @@ __pycache__/
 ## To delete soon
 django_stuff/
 
-# Site settings (sensitive information)
-dwcfiles/settings.py
-
-db/
-__pycache__/

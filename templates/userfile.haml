@@ -11,6 +11,15 @@
       .test
         %audio.audio controls
           %source src = "{{ url_for('uploaded_file', filename=userfile.filename) }}"
+    -else
+      .box
+        %span.icon.is-large
+          %img src = "{{ url_for('static', filename='img/icon-download.png') }}"
+        .content
+          %p
+            = userfile.filename
+        %a.button.is-danger.is-outlined href = "{{ url_for('uploaded_file', filename=userfile.filename) }}" download = {{ userfile.filename }}
+          Download
   .column.is-3
     .content#info
       %h3.title
