@@ -1,9 +1,13 @@
 # Vim swap files
 *.swp
 
+# Development folders
+db/
+uploads/
+virtenv/
+__pycache__/
+
 # Old django stuff
 ## To delete soon
 django_stuff/
 
-# Virtual environment
-virtenv/
