@@ -3,7 +3,6 @@ import io
 import uuid
 import base64
 import re
-from datetime import datetime
 from flask import Flask, render_template, redirect, send_from_directory
 from hamlish_jinja import HamlishExtension
 from flask_pymongo import PyMongo, ASCENDING, DESCENDING
@@ -69,19 +68,18 @@ def home():
         filename = unique_id + ext
         # Save to database
         mongo.db.userfiles.insert_one({
-            '_id': unique_id, 
+            'unique_id': unique_id, 
             'filename': filename,
             'title': form.title.data, 
             'mime_type': f.mimetype,
             'filesize': retrieve_filesize(f),
-            'pub_date': datetime.now(),
             })
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect('/')
     context = {
             'form': form,
-            'last_multimedia': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}).sort('pub_date', DESCENDING),
-            'last_files': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}).sort('pub_date', DESCENDING),
+            'last_multimedia': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}).sort('_id', DESCENDING),
+            'last_files': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}).sort('_id', DESCENDING),
             }
     return render_template('home.haml', **context)
 

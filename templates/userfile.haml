@@ -18,7 +18,7 @@
         .content
           %p
             = userfile.filename
-        %a.button.is-danger.is-outlined href = "{{ url_for('uploaded_file', filename=userfile.filename) }}" download = {{ userfile.filename }}
+        %a.button.is-danger.is-outlined href = "{{ url_for('uploaded_file', filename=userfile.filename) }}" download
           Download
   .column.is-3
     .content#info
