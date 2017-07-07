@@ -3,13 +3,14 @@ import io
 import uuid
 import base64
 import re
+import shutil
 from flask import Flask, render_template, redirect, send_from_directory
 from hamlish_jinja import HamlishExtension
 from flask_pymongo import PyMongo, ASCENDING, DESCENDING
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
-from wtforms import StringField
+from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired
 
 # User uploaded files location
@@ -33,7 +34,8 @@ mongo = PyMongo(app)
 
 
 class FileUploadForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
+    title = StringField('Title')
+    filename_title = BooleanField('')
     actualfile = FileField(validators=[FileRequired()])
 
 
@@ -42,19 +44,26 @@ def create_url_id():
     """
     return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8').replace('=', '')
 
-def retrieve_filesize(stream):
-    """Retrieve file size in bytes on a open stream and outputs it in human
-    readable format
+
+def filesize(stream):
+    """Retrieve size in bytes on a open stream
     """
     stream.seek(0, io.SEEK_END)
     filesize = stream.tell()
     stream.seek(0, io.SEEK_SET)
+    return filesize
+    
+
+def human_readable(num_bytes):
+    """Convert a number of bytes to a human readable format
+    """
     suffixes = ['B', 'KB', 'MB', 'GB']
     suffixIndex = 0
-    while filesize > 1024 and suffixIndex < 3:
+    while num_bytes > 1024 and suffixIndex < 3:
         suffixIndex += 1
-        filesize = filesize/1024
-    return f'{filesize:.2f} {suffixes[suffixIndex]}'
+        num_bytes = num_bytes/1024
+    return f'{num_bytes:.2f} {suffixes[suffixIndex]}'
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -72,21 +81,25 @@ def home():
             'filename': filename,
             'title': form.title.data, 
             'mime_type': f.mimetype,
-            'filesize': retrieve_filesize(f),
+            'filesize': human_readable(filesize(f)),
             })
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect('/')
+    fs_info = shutil.disk_usage(app.config['UPLOAD_FOLDER'])
     context = {
             'form': form,
             'last_multimedia': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}).sort('_id', DESCENDING),
             'last_files': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}).sort('_id', DESCENDING),
+            'used_space': human_readable(fs_info[1]),
+            'total_space': human_readable(fs_info[0]),
+            'percent_space': fs_info[1]/fs_info[0]*100,
             }
     return render_template('home.haml', **context)
 
 
 @app.route('/<userfile_id>')
 def get_userfile(userfile_id):
-    userfile = mongo.db.userfiles.find_one_or_404({'_id': userfile_id})
+    userfile = mongo.db.userfiles.find_one_or_404({'unique_id': userfile_id})
     return render_template('userfile.haml', userfile=userfile)
 
 
