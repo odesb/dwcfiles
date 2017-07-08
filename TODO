@@ -4,3 +4,5 @@
 - Style the userfile detail page for all types of files
 - Banners and other A E S T H E T I C
 - BUG: Doesn't add extension if no extension was provided in the original filename
+- Drag and drop files
+- Create thumbnails for every image?

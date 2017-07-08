@@ -92,7 +92,7 @@ def home():
         ext = os.path.splitext(secure_filename(f.filename))[1]
         filename = unique_id + ext
         # Define the file title
-        title = f.filename if form.filename_title.data else form.title.data
+        title = form.title.data if form.title.data != '' else f.filename
         # Find the mime type and if it is a video, generate a thumbnail
         mime_type = from_buffer(f.read(), mime=True)
         f.seek(0, 0)
