@@ -5,3 +5,6 @@
 - Hamlish-jinja
 - Flask-PyMongo
 - Flask-WTF
+- Python-magic
+- FFmpeg (tested with FFmpeg 3.3.2)
+- Pillow

@@ -6,48 +6,99 @@
         .column.is-half.is-offset-one-quarter
           %form action = '/' method = 'post' enctype = 'multipart/form-data'
             {{ form.csrf_token }}
-            .field
-              %label.label 
-                = form.title.label 
-              %p.control
-                = form.title(size=20, class='input')
-            .field
-              %label.label
-                = form.filename_title.label
-              %p.control
-                = form.filename_title
-            .field
-              = form.actualfile
-            .has-text-centered
-              %button.button.is-info type = 'submit'
-                Upload
+            .columns.is-mobile
+              .column.is-2
+                .circle.has-text-centered
+                  1
+              .column
+                .field
+                  %p.control
+                    = form.actualfile
+                  -if form.actualfile.errors
+                    %ul
+                      -for error in form.actualfile.errors
+                        %li
+                          %p.help.is-danger
+                            = error
+            .columns.is-mobile
+              .column.is-2
+                .circle.has-text-centered
+                  2
+              .column
+                .tile.is-ancestor
+                  .tile.is-parent.is-vertical
+                    .tile.is-child.field
+                      -if form.title.errors
+                        %ul
+                          -for error in form.title.errors
+                            %li
+                              %p.help.is-danger
+                                = error
+                      %p.control
+                        = form.title(size=20, class='input', placeholder='Title')
+                    .tile.is-child.has-text-centered
+                      %strong
+                        or
+                    .tile.is-child.field
+                      %p.control
+                        %label.checkbox
+                          = form.filename_title
+                          Use filename as title
+            .columns.is-mobile
+              .column.is-2
+                .circle.has-text-centered
+                  3
+              .column
+                .has-text-centered
+                  %button.button.is-info#submit onclick = loadButton() type = 'submit'
+                    Upload
   .column
-    .panel
+    .panel#multimedia
       %p.panel-heading 
         Latest multimedia files
       -for media in last_multimedia:
         %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
           -if 'image' in media.mime_type
-            .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }})");"
+            .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }});"
           -elif 'video' in media.mime_type
-            .thumbnail.level
-              .level-item
-                %span.icon.is-medium
-                  %i.fa.fa-play
+            %div
+              .thumbnail.level = style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '.png') }});"
+                .level-item
+                  %span.icon.is-medium
+                    %i.fa.fa-play
           -elif 'audio' in media.mime_type
-            .thumbnail.level
-              .level-item
-                %span.icon.is-medium
-                  %i.fa.fa-volume-down
-          = media.title
+            %div
+              .thumbnail.level
+                .level-item
+                  %span.icon.is-medium
+                    %i.fa.fa-volume-down
+          .block
+            = media.title
+            .content.is-small
+              .mime
+                = media.mime_type|upper
+      .panel-block
+        %button.button.is-info.is-outlined.is-fullwidth.multimedia
+          View more
     .panel
       %p.panel-heading 
         Last uploaded files
       -for userfile in last_files
-        %a.panel-block href = "/{{ userfile.unique_id }}"
-          %span.panel-icon
-            %i.fa.fa-file-o aria-hidden = 'true'
-          = userfile.title
+        %a.panel-block.is-paddingless href = "/{{ userfile.unique_id }}"
+          %div
+            .thumbnail.level
+              .level-item
+                %span.icon.is-medium style = 'height: 50px; width: 50px;'
+                  ;%i.fa.fa-file-o aria-hidden = 'true'
+                  %img src = "{{ url_for('static', filename='img/icon-download.png') }}"
+          .block
+            = userfile.title
+            .content.is-small
+              .mime
+                = userfile.mime_type|upper
+      .panel-block
+        %button.button.is-info.is-outlined.is-fullwidth.other
+          View more
     %progress.progress.is-info value = '{{ percent_space }}' max = '100' 
       = percent_space
     %p.has-text-centered

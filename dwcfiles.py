@@ -1,17 +1,20 @@
 import os
-import io
 import uuid
 import base64
 import re
 import shutil
-from flask import Flask, render_template, redirect, send_from_directory
+import io
+import subprocess as sp
+from magic import from_buffer
+from PIL import Image
+from flask import Flask, render_template, redirect, send_from_directory, url_for, flash, request
 from hamlish_jinja import HamlishExtension
 from flask_pymongo import PyMongo, ASCENDING, DESCENDING
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 from wtforms import StringField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
 # User uploaded files location
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
@@ -33,9 +36,22 @@ app.jinja_env.hamlish_enable_div_shortcut = True
 mongo = PyMongo(app)
 
 
+class TitleRequired():
+    def __init__(self, otherfield=None, message=None):
+        self.otherfield = otherfield
+        if not message:
+            message = 'Must provide a valid title'
+        self.message = message
+
+    def __call__(self, form, field):
+        other = form[self.otherfield]
+        if (not field.data or field.data == '') and (not other.data or other.data == ''):
+            raise ValidationError(self.message)
+
+
 class FileUploadForm(FlaskForm):
-    title = StringField('Title')
-    filename_title = BooleanField('')
+    title = StringField('Title', validators=[TitleRequired(otherfield='filename_title')])
+    filename_title = BooleanField('Use filename as title')
     actualfile = FileField(validators=[FileRequired()])
 
 
@@ -48,9 +64,9 @@ def create_url_id():
 def filesize(stream):
     """Retrieve size in bytes on a open stream
     """
-    stream.seek(0, io.SEEK_END)
+    stream.seek(0, 2)   # Change stream position to the end
     filesize = stream.tell()
-    stream.seek(0, io.SEEK_SET)
+    stream.seek(0, 0)   # Change stream position to the beginning
     return filesize
     
 
@@ -75,27 +91,58 @@ def home():
         unique_id = create_url_id()
         ext = os.path.splitext(secure_filename(f.filename))[1]
         filename = unique_id + ext
-        # Save to database
+        # Define the file title
+        title = f.filename if form.filename_title.data else form.title.data
+        # Find the mime type and if it is a video, generate a thumbnail
+        mime_type = from_buffer(f.read(), mime=True)
+        f.seek(0, 0)
+        if 'video' in mime_type:
+            ss_filename = os.path.join(app.config['UPLOAD_FOLDER'], unique_id + '.png')
+            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
+            # Generate the thumbnail
+            size = 226, 160
+            im = Image.open(io.BytesIO(completed.stdout))
+            im.thumbnail(size)
+            im.save(ss_filename)
+        # Save to database and filesystem
         mongo.db.userfiles.insert_one({
             'unique_id': unique_id, 
             'filename': filename,
-            'title': form.title.data, 
-            'mime_type': f.mimetype,
+            'title': title, 
+            'mime_type': mime_type,
             'filesize': human_readable(filesize(f)),
             })
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return redirect('/')
+        # Send successful message and redirect 
+        flash('File successfully uploaded!')
+        return redirect(url_for('get_userfile', userfile_id=unique_id))
     fs_info = shutil.disk_usage(app.config['UPLOAD_FOLDER'])
     context = {
             'form': form,
-            'last_multimedia': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}).sort('_id', DESCENDING),
-            'last_files': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}).sort('_id', DESCENDING),
+            'last_multimedia': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}, limit=5, sort=[('_id', DESCENDING)]),
+            'last_files': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}, limit=5, sort=[('_id', DESCENDING)]),
             'used_space': human_readable(fs_info[1]),
             'total_space': human_readable(fs_info[0]),
             'percent_space': fs_info[1]/fs_info[0]*100,
             }
     return render_template('home.haml', **context)
 
+
+@app.route('/_ajax_multimedia')
+def load_multimedia():
+    n = int(request.args.get('next'))
+    context = {
+            'more_media': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
+            }
+    return render_template('more.haml', **context)
+
+@app.route('/_ajax_other')
+def load_other():
+    n = int(request.args.get('next'))
+    context = {
+            'more_other': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
+            }
+    return render_template('more.haml', **context)
 
 @app.route('/<userfile_id>')
 def get_userfile(userfile_id):

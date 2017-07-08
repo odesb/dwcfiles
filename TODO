@@ -1,14 +1,6 @@
-- Form:
-  - Error messages in fields
-  - Success message + redirection
-  - Form layout:
-	1- Choose file
-  	2- Title (optional)
-		or
-	   Use filename as title
-
-- Thumbnails for video and sound (?) files
-
+- More validators for form
+- Shorter hash
+- Thumbnails for sound (?) files
 - Style the userfile detail page for all types of files
-
 - Banners and other A E S T H E T I C
+- BUG: Doesn't add extension if no extension was provided in the original filename

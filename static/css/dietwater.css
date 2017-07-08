@@ -3,18 +3,60 @@
   width: 113px;
   height: 80px;
   margin-right: 5px; 
-  }
+}
 
 form {
   margin-top: 150px;
   margin-bottom: 150px; 
-  }
+}
 
 #info {
   margin-top: 30px; 
-  }
+}
 
 #info dd {
   margin-left: 0; 
-  }
+}
 
+input[type="checkbox"] {
+	margin-right: 5px;
+}
+
+.message {
+	animation: fadein 2s;
+}
+
+@keyframes fadein {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+.inline-block-middle {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.circle {
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	border: 2px solid #666;
+	line-height: 26px;
+	color: #666;
+	font-size: 14px;
+	margin-right: 10px;
+	border-radius: 50%;
+}
+
+.fa-play {
+	color: #EDEBE8;
+}
+
+.mime {
+	color: #BA862C;
+	display: inline-block;
+	padding: 2px 4px 2px 4px;
+	border: 1px solid #BA862C;
+	font-size: 10px;
+	margin-top: 7px;
+}

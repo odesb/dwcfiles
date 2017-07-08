@@ -13,11 +13,28 @@
         .columns
           .column
             %h1.title 
-              %a href = '/'
+              %a href = "{{ url_for('home') }}"
                 Dietwater File Hosting
             %h2.subtitle 
               Keeping your memes safe since 2017
+    -with messages = get_flashed_messages()
+      -if messages
+        %section
+          .container
+            .columns
+              .column.is-half.is-offset-one-quarter
+                %ul
+                  -for message in messages
+                    %li
+                      %article.message.is-success
+                        .message-body
+                          .has-text-centered
+                            = message
     %section.section
       .container
         .columns
           -block main
+    %script
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    %script src = "{{ url_for('static', filename='js/jquery-3.2.1.js') }}"
+    %script src = "{{ url_for('static', filename='js/dietwater.js') }}"
