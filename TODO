@@ -6,3 +6,6 @@
 - BUG: Doesn't add extension if no extension was provided in the original filename
 - Drag and drop files
 - Create thumbnails for every image?
+- Store files in GridFS
+- BUG: FFmpeg unspecified pixel format
+- MKV not supported in HTML5 video

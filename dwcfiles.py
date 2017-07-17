@@ -73,9 +73,9 @@ def filesize(stream):
 def human_readable(num_bytes):
     """Convert a number of bytes to a human readable format
     """
-    suffixes = ['B', 'KB', 'MB', 'GB']
+    suffixes = ['B', 'KB', 'MB', 'GB', 'TB']
     suffixIndex = 0
-    while num_bytes > 1024 and suffixIndex < 3:
+    while num_bytes > 1024 and suffixIndex < 4:
         suffixIndex += 1
         num_bytes = num_bytes/1024
     return f'{num_bytes:.2f} {suffixes[suffixIndex]}'
