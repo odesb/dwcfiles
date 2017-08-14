@@ -60,3 +60,7 @@ input[type="checkbox"] {
 	font-size: 10px;
 	margin-top: 7px;
 }
+
+.column .field-custom {
+	margin-bottom: 25px;
+}
