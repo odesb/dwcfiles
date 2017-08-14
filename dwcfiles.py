@@ -36,21 +36,20 @@ app.jinja_env.hamlish_enable_div_shortcut = True
 mongo = PyMongo(app)
 
 
-class TitleRequired():
-    def __init__(self, otherfield=None, message=None):
-        self.otherfield = otherfield
-        if not message:
-            message = 'Must provide a valid title'
-        self.message = message
-
-    def __call__(self, form, field):
-        other = form[self.otherfield]
-        if (not field.data or field.data == '') and (not other.data or other.data == ''):
-            raise ValidationError(self.message)
+@app.context_processor
+def meme_saying():
+    meme_sayings = [
+            'Keeping your memes safe since 2017',
+            'No ads, yet',
+            'With the power of the Cloud&trade;',
+            'Do it for the children',
+            '😂💯👌m👌MMMMᎷМ💯💯😂💯👌ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ😂💯💯👌'
+            ]
+    return dict(meme_sayings=meme_sayings)
 
 
 class FileUploadForm(FlaskForm):
-    title = StringField('Title', validators=[TitleRequired(otherfield='filename_title')])
+    title = StringField('Title')
     filename_title = BooleanField('Use filename as title')
     actualfile = FileField(validators=[FileRequired()])
 
@@ -68,7 +67,7 @@ def filesize(stream):
     filesize = stream.tell()
     stream.seek(0, 0)   # Change stream position to the beginning
     return filesize
-    
+
 
 def human_readable(num_bytes):
     """Convert a number of bytes to a human readable format
@@ -106,14 +105,14 @@ def home():
             im.save(ss_filename)
         # Save to database and filesystem
         mongo.db.userfiles.insert_one({
-            'unique_id': unique_id, 
+            'unique_id': unique_id,
             'filename': filename,
-            'title': title, 
+            'title': title,
             'mime_type': mime_type,
             'filesize': human_readable(filesize(f)),
             })
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Send successful message and redirect 
+        # Send successful message and redirect
         flash('File successfully uploaded!')
         return redirect(url_for('get_userfile', userfile_id=unique_id))
     fs_info = shutil.disk_usage(app.config['UPLOAD_FOLDER'])

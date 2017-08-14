@@ -11,7 +11,7 @@ $(function() {
 	});
 	var otherButton = $('button.other');
 	var other_next = 1;
-	otherButton.on('click', function() {
+	otherButton.on('click', function() {
 		otherButton.toggleClass('is-loading');
 		$.get($SCRIPT_ROOT + '/_ajax_other?next=' + other_next, function(data) {
 			otherButton.parent().before(data);
@@ -24,3 +24,11 @@ var d = document.getElementById('submit');
 function loadButton() {
 	d.classList.add('is-loading');
 }
+(function() {
+	var file = $('#actualfile');
+	var filename = $('#title');
+	file.change(function() {
+		var clean=file.val().split('\\').pop();
+		filename.val(clean);
+	});
+})();

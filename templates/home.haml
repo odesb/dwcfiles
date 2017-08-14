@@ -7,59 +7,45 @@
           %form action = '' method = 'post' enctype = 'multipart/form-data'
             {{ form.csrf_token }}
             .columns.is-mobile
-              .column.is-2
-                .circle.has-text-centered
-                  1
               .column
-                .field
+                .field.field-custom
                   %p.control
-                    = form.actualfile
-                  -if form.actualfile.errors
+                    -if form.actualfile.errors
+                      %ul
+                        -for error in form.actualfile.errors
+                          %li
+                            %p.help.is-danger
+                              = error
+                    .file.has-name.is-centered
+                      %label.file-label
+                        = form.actualfile(class="file-input")
+                        %span.file-cta
+                          %span.file-icon
+                            %i.fa.fa-upload
+                          %span.file-label
+                            Choose a file...
+                .field.field-custom
+                  -if form.title.errors
                     %ul
-                      -for error in form.actualfile.errors
+                      -for error in form.title.errors
                         %li
                           %p.help.is-danger
                             = error
-            .columns.is-mobile
-              .column.is-2
-                .circle.has-text-centered
-                  2
-              .column
-                .tile.is-ancestor
-                  .tile.is-parent.is-vertical
-                    .tile.is-child.field
-                      -if form.title.errors
-                        %ul
-                          -for error in form.title.errors
-                            %li
-                              %p.help.is-danger
-                                = error
-                      %p.control
-                        = form.title(size=20, class='input', placeholder='Title')
-                    .tile.is-child.has-text-centered
-                      %strong
-                        or
-                    .tile.is-child.field
-                      %p.control
-                        %label.checkbox
-                          = form.filename_title
-                          Use filename as title
-            .columns.is-mobile
-              .column.is-2
-                .circle.has-text-centered
-                  3
-              .column
+                  %p.control.has-icons-left
+                    = form.title(size=20, class='input', placeholder='Title')
+                    %span.icon.is-small.is-left
+                      %i.fa.fa-file-o
                 .has-text-centered
                   %button.button.is-info#submit onclick = loadButton() type = 'submit'
                     Upload
   .column
     .panel#multimedia
-      %p.panel-heading 
+      %p.panel-heading
         Latest multimedia files
       -for media in last_multimedia:
-        %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
+        %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
           -if 'image' in media.mime_type
-            .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }});"
+            .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }});"
           -elif 'video' in media.mime_type
             %div
               .thumbnail.level = style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '.png') }});"
@@ -81,7 +67,7 @@
         %button.button.is-info.is-outlined.is-fullwidth.multimedia
           View more
     .panel
-      %p.panel-heading 
+      %p.panel-heading
         Last uploaded files
       -for userfile in last_files
         %a.panel-block.is-paddingless href = "/{{ userfile.unique_id }}"
@@ -99,8 +85,8 @@
       .panel-block
         %button.button.is-info.is-outlined.is-fullwidth.other
           View more
-    %progress.progress.is-info value = '{{ percent_space }}' max = '100' 
+    %progress.progress.is-info value = '{{ percent_space }}' max = '100'
       = percent_space
     %p.has-text-centered
-      {{ used_space }} / {{ total_space }}
+      {{ used_space }} / {{ total_space }}
 
