@@ -16,6 +16,12 @@ from werkzeug.utils import secure_filename
 from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
 
+HTML5_VIDEO_FORMATS = [
+        'video/webm',
+        'video/ogg',
+        'video/mp4'
+        ]
+
 # User uploaded files location
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 
@@ -80,6 +86,16 @@ def human_readable(num_bytes):
     return f'{num_bytes:.2f} {suffixes[suffixIndex]}'
 
 
+def generate_thumbnail(f, unique_id):
+    ss_filename = os.path.join(app.config['UPLOAD_FOLDER'], unique_id + '.png')
+    completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
+    # Generate the thumbnail
+    size = 226, 160
+    im = Image.open(io.BytesIO(completed.stdout))
+    im.thumbnail(size)
+    im.save(ss_filename)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     form = FileUploadForm()
@@ -95,14 +111,8 @@ def home():
         # Find the mime type and if it is a video, generate a thumbnail
         mime_type = from_buffer(f.read(), mime=True)
         f.seek(0, 0)
-        if 'video' in mime_type:
-            ss_filename = os.path.join(app.config['UPLOAD_FOLDER'], unique_id + '.png')
-            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
-            # Generate the thumbnail
-            size = 226, 160
-            im = Image.open(io.BytesIO(completed.stdout))
-            im.thumbnail(size)
-            im.save(ss_filename)
+        if mime_type in HTML5_VIDEO_FORMATS:
+            generate_thumbnail(f, unique_id)
         # Save to database and filesystem
         mongo.db.userfiles.insert_one({
             'unique_id': unique_id,
