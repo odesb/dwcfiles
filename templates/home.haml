@@ -38,31 +38,32 @@
                 .has-text-centered
                   %button.button.is-info#submit onclick = loadButton() type = 'submit'
                     Upload
-  .column
+  .column.is-4
     .panel#multimedia
       %p.panel-heading
         Latest multimedia files
       -for media in last_multimedia:
         %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
-          -if 'image' in media.mime_type
-            .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }});"
-          -elif 'video' in media.mime_type
-            %div
-              .thumbnail.level = style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '.png') }});"
-                .level-item
-                  %span.icon.is-medium
-                    %i.fa.fa-play
-          -elif 'audio' in media.mime_type
-            %div
-              .thumbnail.level
-                .level-item
-                  %span.icon.is-medium
-                    %i.fa.fa-volume-down
-          .block
-            = media.title
-            .content.is-small
-              .mime
-                = media.mime_type|upper
+          .flex-container style = "display: flex;align-items: center;"
+            -if 'image' in media.mime_type
+              .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }});"
+            -elif 'video' in media.mime_type
+              %div
+                .thumbnail.level style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '.png') }});"
+                  .level-item
+                    %span.icon.is-medium
+                      %i.fa.fa-play
+            -elif 'audio' in media.mime_type
+              %div
+                .thumbnail.level
+                  .level-item
+                    %span.icon.is-medium
+                      %i.fa.fa-volume-down
+            .block
+              = media.title
+              .content.is-small
+                .mime
+                  = media.mime_type|upper
       .panel-block
         %button.button.is-info.is-outlined.is-fullwidth.multimedia
           View more
@@ -70,18 +71,19 @@
       %p.panel-heading
         Last uploaded files
       -for userfile in last_files
-        %a.panel-block.is-paddingless href = "/{{ userfile.unique_id }}"
-          %div
-            .thumbnail.level
-              .level-item
-                %span.icon.is-medium style = 'height: 50px; width: 50px;'
-                  ;%i.fa.fa-file-o aria-hidden = 'true'
-                  %img src = "{{ url_for('static', filename='img/icon-download.png') }}"
-          .block
-            = userfile.title
-            .content.is-small
-              .mime
-                = userfile.mime_type|upper
+        %a.panel-block.is-paddingless href = "/{{ userfile.unique_id }}"
+          .flex-container style = "display: flex; align-items: center; max-width:100%;"
+            %div
+              .thumbnail.level
+                .level-item
+                  %span.icon.is-medium style = 'height: 50px; width: 50px;'
+                    ;%i.fa.fa-file-o aria-hidden = 'true'
+                    %img src = "{{ url_for('static', filename='img/icon-download.png') }}"
+            .block style = "overflow: hidden;"
+              = userfile.title
+              .content.is-small
+                .mime
+                  = userfile.mime_type|upper
       .panel-block
         %button.button.is-info.is-outlined.is-fullwidth.other
           View more
