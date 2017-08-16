@@ -1,7 +1,6 @@
 import os
 import uuid
 import base64
-import re
 import shutil
 import io
 import subprocess as sp
@@ -14,19 +13,45 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 from wtforms import StringField, BooleanField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired
 
-HTML5_VIDEO_FORMATS = [
+
+HTML5_FORMATS = [
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/webm',
+        'audio/ogg',
+        'audio/wav',
+        'audio/x-wav',
+        'audio/x-pn-wav',
+        'audio/flac',
+        'audio/x-flac',
+        'image/jpeg',
+        'image/gif',
+        'image/png',
+        'image/svg',
+        'image/bmp',
         'video/webm',
         'video/ogg',
         'video/mp4'
         ]
 
-# User uploaded files location
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+
+UNCOMMON_EXTENSIONS = [
+        '.tar'
+        ]
+
+
+MEME_SAYINGS = [
+            'Keeping your memes safe since 2017',
+            'No ads, yet',
+            'With the power of the Cloud&trade;',
+            'Do it for the children',
+            '😂💯👌m👌MMMMᎷМ💯💯😂💯👌ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ😂💯💯👌'
+            ]
+
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Secret key (used for CSRF protection and sessions)
 # To generate, execute this in a python shell:
@@ -44,19 +69,11 @@ mongo = PyMongo(app)
 
 @app.context_processor
 def meme_saying():
-    meme_sayings = [
-            'Keeping your memes safe since 2017',
-            'No ads, yet',
-            'With the power of the Cloud&trade;',
-            'Do it for the children',
-            '😂💯👌m👌MMMMᎷМ💯💯😂💯👌ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ😂💯💯👌'
-            ]
-    return dict(meme_sayings=meme_sayings)
+    return dict(meme_sayings=MEME_SAYINGS)
 
 
 class FileUploadForm(FlaskForm):
-    title = StringField('Title')
-    filename_title = BooleanField('Use filename as title')
+    title = StringField('Title', validators=[DataRequired()])
     actualfile = FileField(validators=[FileRequired()])
 
 
@@ -87,33 +104,52 @@ def human_readable(num_bytes):
     return f'{num_bytes:.2f} {suffixes[suffixIndex]}'
 
 
-def generate_thumbnail(f, unique_id):
-    ss_filename = os.path.join(app.config['UPLOAD_FOLDER'], unique_id + '.png')
-    completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
+def retrieve_extension(filename):
+    for ext in UNCOMMON_EXTENSIONS:
+        if ext in filename:
+            index = filename.find(ext)
+            return filename[index:]
+    return os.path.splitext(filename)[1]
+
+def generate_thumbnail(f, unique_id, video=False):
+    thumb_filename = unique_id + '_thumb.png'
+    if video:
+        completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
+        f = completed.stdout
+    elif not video:
+        f = f.read()
     # Generate the thumbnail
     size = 226, 160
-    im = Image.open(io.BytesIO(completed.stdout))
+    im = Image.open(io.BytesIO(f))
     im.thumbnail(size)
-    im.save(ss_filename)
+    raw_im = io.BytesIO()
+    im.save(raw_im, 'png')
+    raw_im.seek(0, 0)
+    mongo.save_file(thumb_filename, raw_im)
 
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     form = FileUploadForm()
     if form.validate_on_submit():
-        # validate_on_submit verifies if it is a POST request and if valid
+        # validate_on_submit verifies if it is a POST request and if form is valid
         f = form.actualfile.data
         # Create unique id and filename based on existing extension
         unique_id = create_url_id()
-        ext = os.path.splitext(secure_filename(f.filename))[1]
+        ext = retrieve_extension(secure_filename(f.filename))
         filename = unique_id + ext
         # Define the file title
-        title = form.title.data if form.title.data != '' else f.filename
+        title = form.title.data
         # Find the mime type and if it is a video, generate a thumbnail
         mime_type = from_buffer(f.read(), mime=True)
         f.seek(0, 0)
-        if mime_type in HTML5_VIDEO_FORMATS:
-            generate_thumbnail(f, unique_id)
+        html5 = False
+        if mime_type in HTML5_FORMATS:
+            html5 = True
+            if 'image' in mime_type:
+                generate_thumbnail(f, unique_id)
+            elif 'video' in mime_type:
+                generate_thumbnail(f, unique_id, video=True)
         # Save to database and filesystem
         mongo.db.userfiles.insert_one({
             'unique_id': unique_id,
@@ -121,16 +157,18 @@ def home():
             'title': title,
             'mime_type': mime_type,
             'filesize': human_readable(filesize(f)),
+            'html5': html5,
+            'pinned': False,
             })
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        mongo.save_file(filename, f)
         # Send successful message and redirect
         flash('File successfully uploaded!')
         return redirect(url_for('get_userfile', userfile_id=unique_id))
-    fs_info = shutil.disk_usage(app.config['UPLOAD_FOLDER'])
+    fs_info = shutil.disk_usage(os.path.dirname(__file__))
     context = {
             'form': form,
-            'last_multimedia': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}, limit=5, sort=[('_id', DESCENDING)]),
-            'last_files': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}, limit=5, sort=[('_id', DESCENDING)]),
+            'last_multimedia': mongo.db.userfiles.find({'html5': True}, limit=5, sort=[('_id', DESCENDING)]),
+            'last_files': mongo.db.userfiles.find({'html5': False}, limit=5, sort=[('_id', DESCENDING)]),
             'used_space': human_readable(fs_info[1]),
             'total_space': human_readable(fs_info[0]),
             'percent_space': fs_info[1]/fs_info[0]*100,
@@ -138,21 +176,15 @@ def home():
     return render_template('home.haml', **context)
 
 
-@app.route('/_ajax_multimedia')
-def load_multimedia():
+@app.route('/_ajax_more')
+def load_more():
     n = int(request.args.get('next'))
+    html5 = bool(request.args.get('html5'))
     context = {
-            'more_media': mongo.db.userfiles.find({'mime_type': re.compile('^(image|video|audio)')}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
+            'more': mongo.db.userfiles.find({'html5': html5}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
             }
     return render_template('more.haml', **context)
 
-@app.route('/_ajax_other')
-def load_other():
-    n = int(request.args.get('next'))
-    context = {
-            'more_other': mongo.db.userfiles.find({'mime_type': re.compile('^(?!image|video|audio)')}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
-            }
-    return render_template('more.haml', **context)
 
 @app.route('/<userfile_id>')
 def get_userfile(userfile_id):
@@ -162,5 +194,4 @@ def get_userfile(userfile_id):
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return mongo.send_file(filename)
