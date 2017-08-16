@@ -32,7 +32,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # To generate, execute this in a python shell:
 # import os
 # os.urandom(24)
-app.secret_key = 'dev'
+app.secret_key = b'0=\x18\\\x1b\x05\xe3\x82;>\x8e\x9d\xfa\xad\x1a\xb4r\xb4t\xb3\x9dwb\xc1'
 
 # Hamlish-jinja setup
 app.jinja_env.add_extension(HamlishExtension)
