@@ -46,10 +46,10 @@
         %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
           .flex-container style = "display: flex;align-items: center;"
             -if 'image' in media.mime_type
-              .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.filename) }});"
+              .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});"
             -elif 'video' in media.mime_type
               %div
-                .thumbnail.level style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '.png') }});"
+                .thumbnail.level style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});"
                   .level-item
                     %span.icon.is-medium
                       %i.fa.fa-play
