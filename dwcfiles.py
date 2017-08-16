@@ -6,13 +6,13 @@ import io
 import subprocess as sp
 from magic import from_buffer
 from PIL import Image
-from flask import Flask, render_template, redirect, send_from_directory, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request
 from hamlish_jinja import HamlishExtension
-from flask_pymongo import PyMongo, ASCENDING, DESCENDING
+from flask_pymongo import PyMongo, DESCENDING
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
-from wtforms import StringField, BooleanField
+from wtforms import StringField
 from wtforms.validators import DataRequired
 
 
