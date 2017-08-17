@@ -1,3 +1,7 @@
+body{
+    margin:0px;
+}
+
 .thumbnail {
 	background-size: cover;
 	width: 113px;
@@ -56,11 +60,12 @@ input[type="checkbox"] {
 /*Container box for thumbnails*/
 .gallery{
     margin:auto;
-    margin: 5px 0px 0px 5px;
+    width:100%;
+    overflow: hidden;
 }
 
 /*Actual image*/
-.box{
+.thumb-box{
     padding-bottom: 100%;
     width:100%;
     position: relative;
@@ -70,7 +75,7 @@ input[type="checkbox"] {
 
 /* Description */
 
-.box>.thumbnail>.description{
+.thumb-box>.thumb>a>.description{
     position: absolute;
     background-color: rgba(0, 0, 0, 0.6);
     color:white;
@@ -83,14 +88,14 @@ input[type="checkbox"] {
     transition: bottom 0.5s;
 }
 
-.box>.thumbnail:hover>.description{
+.thumb-box>.thumb:hover>a>.description{
     bottom: 0%;
     transition: bottom 0.5s
 }
 
 /* End of Description */
 
-.box>.thumbnail{
+.thumb-box>.thumb{
     position: absolute;
     left: 0px;
     right: 5px;
@@ -100,14 +105,20 @@ input[type="checkbox"] {
     overflow: hidden;
 }
 
-.box>.thumbnail>img{
+.thumb-box>.thumb>a{
+    width: 100%;
+    height:100%;
+    text-decoration: none;
+}
+
+.thumb-box>.thumb>a>img{
     width: 100%;
     height:100%;
 }
 
 @media only screen and (min-width : 320px) {
 
-   .box {
+   .thumb-box {
         width: 100%;
         padding-bottom: 100%;
    }
@@ -115,7 +126,7 @@ input[type="checkbox"] {
 
 @media only screen and (min-width:481px) {
 
-   .box {
+   .thumb-box {
         width: 50%;
         padding-bottom: 50%;
    }
@@ -124,7 +135,7 @@ input[type="checkbox"] {
 
 @media only screen and (min-width:641px) {
 
-   .box {
+   .thumb-box {
         width: 33.33%;
         padding-bottom: 33.33%;
    }
@@ -132,7 +143,7 @@ input[type="checkbox"] {
 }
 @media only screen and (min-width:961px) { 
 
-    .box {
+    .thumb-box {
         width: 25%;
         padding-bottom: 25%;
     }
@@ -140,7 +151,7 @@ input[type="checkbox"] {
 }
 @media only screen and (min-width:1025px) { 
 
-    .box {
+    .thumb-box {
         width: 25%;
         padding-bottom: 25%;
     }
@@ -148,7 +159,7 @@ input[type="checkbox"] {
 }
 @media only screen and (min-width:1281px) {
 
-    .box {
+    .thumb-box {
         width: 20%;
         padding-bottom: 20%;
     }

@@ -164,7 +164,7 @@ def home():
         # Send successful message and redirect
         flash('File successfully uploaded!')
         return redirect(url_for('get_userfile', userfile_id=unique_id))
-    fs_info = shutil.disk_usage(os.path.dirname(__file__))
+    fs_info = shutil.disk_usage(os.path.dirname(os.path.abspath(__file__)))
     context = {
             'form': form,
             'last_multimedia': mongo.db.userfiles.find({'html5': True}, limit=5, sort=[('_id', DESCENDING)]),
@@ -185,6 +185,11 @@ def load_more():
             }
     return render_template('more.haml', **context)
 
+#For paging in the gallery
+@app.route('/next_page')
+def next_page():
+    return
+
 
 @app.route('/<userfile_id>')
 def get_userfile(userfile_id):
@@ -195,3 +200,16 @@ def get_userfile(userfile_id):
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return mongo.send_file(filename)
+
+@app.route('/gallery')
+def gallery():
+
+    context={
+        'images': mongo.db.userfiles.find({'mime_type': {'$regex': '.*image.*'}}, limit=10, sort=[('_id', DESCENDING)])
+    }
+
+    return render_template('gallery.haml', **context)
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run(host="0.0.0.0")
