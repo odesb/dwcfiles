@@ -57,7 +57,8 @@ app = Flask(__name__)
 # To generate, execute this in a python shell:
 # import os
 # os.urandom(24)
-app.secret_key = b'0=\x18\\\x1b\x05\xe3\x82;>\x8e\x9d\xfa\xad\x1a\xb4r\xb4t\xb3\x9dwb\xc1'
+# And save it in 'secret_key' file
+app.secret_key = open(os.path.join(app.instance_path, 'secret_key'), 'rb').read()
 
 # Hamlish-jinja setup
 app.jinja_env.add_extension(HamlishExtension)

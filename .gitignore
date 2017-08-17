@@ -11,3 +11,5 @@ __pycache__/
 ## To delete soon
 django_stuff/
 
+# Production stuff
+instance/
