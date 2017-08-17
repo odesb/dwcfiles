@@ -52,3 +52,104 @@ input[type="checkbox"] {
 .column .field-custom {
 	margin-bottom: 25px;
 }
+
+/*Container box for thumbnails*/
+.gallery{
+    margin:auto;
+    margin: 5px 0px 0px 5px;
+}
+
+/*Actual image*/
+.box{
+    padding-bottom: 100%;
+    width:100%;
+    position: relative;
+    float:left;
+    overflow: hidden;
+}
+
+/* Description */
+
+.box>.thumbnail>.description{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    color:white;
+    bottom:-25%;
+    left:0px;
+    height:25%;
+    width:100%;
+    box-sizing: border-box;
+    padding:5px;
+    transition: bottom 0.5s;
+}
+
+.box>.thumbnail:hover>.description{
+    bottom: 0%;
+    transition: bottom 0.5s
+}
+
+/* End of Description */
+
+.box>.thumbnail{
+    position: absolute;
+    left: 0px;
+    right: 5px;
+    top: 0px;
+    bottom: 5px;
+    background-color: green;
+    overflow: hidden;
+}
+
+.box>.thumbnail>img{
+    width: 100%;
+    height:100%;
+}
+
+@media only screen and (min-width : 320px) {
+
+   .box {
+        width: 100%;
+        padding-bottom: 100%;
+   }
+}
+
+@media only screen and (min-width:481px) {
+
+   .box {
+        width: 50%;
+        padding-bottom: 50%;
+   }
+
+}
+
+@media only screen and (min-width:641px) {
+
+   .box {
+        width: 33.33%;
+        padding-bottom: 33.33%;
+   }
+
+}
+@media only screen and (min-width:961px) { 
+
+    .box {
+        width: 25%;
+        padding-bottom: 25%;
+    }
+
+}
+@media only screen and (min-width:1025px) { 
+
+    .box {
+        width: 25%;
+        padding-bottom: 25%;
+    }
+
+}
+@media only screen and (min-width:1281px) {
+
+    .box {
+        width: 20%;
+        padding-bottom: 20%;
+    }
+}
