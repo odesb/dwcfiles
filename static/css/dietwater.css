@@ -60,7 +60,7 @@ input[type="checkbox"] {
 }
 
 /*Actual image*/
-.box{
+.box-diet{
     padding-bottom: 100%;
     width:100%;
     position: relative;
@@ -70,7 +70,7 @@ input[type="checkbox"] {
 
 /* Description */
 
-.box>.thumbnail>.description{
+.box-diet>.thumbnail>.description{
     position: absolute;
     background-color: rgba(0, 0, 0, 0.6);
     color:white;
@@ -83,14 +83,14 @@ input[type="checkbox"] {
     transition: bottom 0.5s;
 }
 
-.box>.thumbnail:hover>.description{
+.box-diet>.thumbnail:hover>.description{
     bottom: 0%;
     transition: bottom 0.5s
 }
 
 /* End of Description */
 
-.box>.thumbnail{
+.box-diet>.thumbnail{
     position: absolute;
     left: 0px;
     right: 5px;
@@ -100,14 +100,14 @@ input[type="checkbox"] {
     overflow: hidden;
 }
 
-.box>.thumbnail>img{
+.box-diet>.thumbnail>img{
     width: 100%;
     height:100%;
 }
 
 @media only screen and (min-width : 320px) {
 
-   .box {
+   .box-diet {
         width: 100%;
         padding-bottom: 100%;
    }
@@ -115,7 +115,7 @@ input[type="checkbox"] {
 
 @media only screen and (min-width:481px) {
 
-   .box {
+   .box-diet {
         width: 50%;
         padding-bottom: 50%;
    }
@@ -124,7 +124,7 @@ input[type="checkbox"] {
 
 @media only screen and (min-width:641px) {
 
-   .box {
+   .box-diet {
         width: 33.33%;
         padding-bottom: 33.33%;
    }
@@ -132,7 +132,7 @@ input[type="checkbox"] {
 }
 @media only screen and (min-width:961px) { 
 
-    .box {
+    .box-diet {
         width: 25%;
         padding-bottom: 25%;
     }
@@ -140,7 +140,7 @@ input[type="checkbox"] {
 }
 @media only screen and (min-width:1025px) { 
 
-    .box {
+    .box-diet {
         width: 25%;
         padding-bottom: 25%;
     }
@@ -148,7 +148,7 @@ input[type="checkbox"] {
 }
 @media only screen and (min-width:1281px) {
 
-    .box {
+    .box-diet {
         width: 20%;
         padding-bottom: 20%;
     }
