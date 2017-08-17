@@ -29,7 +29,7 @@
             %a href = "{{ url_for('uploaded_file', filename=userfile.filename) }}"
               Direct link
           %p.control.has-icons-left
-            %input.input.is-success type = 'text' value = 'files.dietwatr.com/uploads/{{ userfile.filename }}'
+            %input.input.is-success type = 'text' value = "files.dietwatr.com{{ url_for('uploaded_file', filename=userfile.filename) }}"
             %span.icon.is-left
               %i.fa.fa-link
   -else
