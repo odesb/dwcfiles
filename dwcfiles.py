@@ -1,6 +1,6 @@
 import os
-import uuid
-import base64
+import string
+import secrets
 import shutil
 import io
 import subprocess as sp
@@ -78,9 +78,9 @@ class FileUploadForm(FlaskForm):
 
 
 def create_url_id():
-    """Create a URL safe unique ID
+    """Create a "unique" id of length = 4
     """
-    return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8').replace('=', '')
+    return ''.join(secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(4))
 
 
 def filesize(stream):
