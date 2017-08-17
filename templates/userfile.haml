@@ -7,7 +7,7 @@
           %img src = "{{ url_for('uploaded_file', filename=userfile.filename) }}"
       -elif 'video' in userfile.mime_type
         %video controls autoplay loop
-          %source src = "{{ url_for('uploaded_file', filename=userfile.filename) }}" type = 'video/webm'
+          %source src = "{{ url_for('uploaded_file', filename=userfile.filename) }}" type = '{{ userfile.mime_type }}'
       -elif 'audio' in userfile.mime_type
         .test
           %audio.audio controls
