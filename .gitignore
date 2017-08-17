@@ -11,3 +11,6 @@ __pycache__/
 ## To delete soon
 django_stuff/
 
+# Production stuff
+dwcfiles.wsgi
+secret_key
