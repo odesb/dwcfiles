@@ -12,5 +12,4 @@ __pycache__/
 django_stuff/
 
 # Production stuff
-dwcfiles.wsgi
-secret_key
+instance/
