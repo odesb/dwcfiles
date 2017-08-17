@@ -192,6 +192,6 @@ def get_userfile(userfile_id):
     return render_template('userfile.haml', userfile=userfile)
 
 
-@app.route('/uploads/<filename>')
+@app.route('/u/<filename>')
 def uploaded_file(filename):
     return mongo.send_file(filename)
