@@ -13,7 +13,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 from wtforms import StringField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 
 
 HTML5_FORMATS = [
@@ -74,7 +74,7 @@ def meme_saying():
 
 
 class FileUploadForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(), Length(max=100)])
     actualfile = FileField(validators=[FileRequired()])
 
 
@@ -204,11 +204,9 @@ def uploaded_file(filename):
 
 @app.route('/gallery')
 def gallery():
-
     context={
         'images': mongo.db.userfiles.find({'mime_type': {'$regex': '.*image.*'}}, limit=10, sort=[('_id', DESCENDING)])
     }
-
     return render_template('gallery.haml', **context)
 
 if __name__ == '__main__':
