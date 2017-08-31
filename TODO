@@ -1,11 +1,15 @@
-- More validators for form
-- Shorter hash
+FEATURES:
 - Thumbnails for sound (?) files
 - Style the userfile detail page for all types of files
 - Banners and other A E S T H E T I C
-- BUG: Doesn't add extension if no extension was provided in the original filename
 - Drag and drop files
-- Create thumbnails for every image?
-- Store files in GridFS
-- BUG: FFmpeg unspecified pixel format
-- MKV not supported in HTML5 video
+- Zoom or fullscreen for images
+- Files browser (instead of clicking view more a thousand times)
+- Private files?
+- API for screenshots/file uploading from the desktop
+- Make tests
+
+BUGS:
+- Doesn't add extension if no extension was provided in the original filename
+- Panels in the home page columns are sometimes broken depending on device/resolution
+- FFmpeg unspecified pixel format
