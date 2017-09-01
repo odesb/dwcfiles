@@ -8,7 +8,8 @@ import subprocess as sp
 from functools import wraps
 from magic import from_buffer
 from PIL import Image
-from flask import Flask, render_template, redirect, url_for, flash, request, abort, jsonify
+from dwcfiles import app
+from flask import render_template, redirect, url_for, flash, request, abort, jsonify
 from hamlish_jinja import HamlishExtension
 from flask_pymongo import PyMongo, DESCENDING
 from flask_wtf import FlaskForm
@@ -53,14 +54,13 @@ MEME_SAYINGS = [
             ]
 
 
-app = Flask(__name__)
-
 # Secret key (used for CSRF protection and sessions)
 # To generate, execute this in a python shell:
 # import os
 # os.urandom(24)
 # And save it in 'secret_key' file
-app.secret_key = open(os.path.join(app.instance_path, 'secret_key'), 'rb').read()
+with open(os.path.join(app.instance_path, 'secret_key'), 'rb') as f:
+    app.secret_key = f.read()
 
 # Hamlish-jinja setup
 app.jinja_env.add_extension(HamlishExtension)
@@ -256,7 +256,4 @@ def api():
         return jsonify(response), 201
 
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run(host="0.0.0.0")
 

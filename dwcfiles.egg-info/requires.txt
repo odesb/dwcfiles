@@ -1,0 +1,6 @@
+flask
+flask-pymongo
+flask-wtf
+hamlish-jinja
+pillow
+python-magic
