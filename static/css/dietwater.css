@@ -161,3 +161,12 @@ input[type="checkbox"] {
         padding-bottom: 20%;
     }
 }
+
+.audio {
+    width: 1000px;
+}
+
+.spacer {
+    height: 100px;
+}
+
