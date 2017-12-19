@@ -6,6 +6,11 @@
         -if 'image' in userfile.mime_type
           %figure.image
             %img src = "{{ userfile_url }}"
+          .level
+            .level-left
+            .level-item
+              %a.button.is-primary.is-inverted
+                Fullscreen
         -elif 'video' in userfile.mime_type
           %video controls autoplay loop
             %source src = "{{ userfile_url }}" type = '{{ userfile.mime_type }}'
@@ -25,7 +30,7 @@
             %dd
               = userfile.filesize
           .field
-            %label.label 
+            %label.label
               %a href = "{{ userfile_url }}"
                 Direct link
             %p.control.has-icons-left

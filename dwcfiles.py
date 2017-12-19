@@ -114,8 +114,11 @@ class UserFile:
         except AttributeError:
             self.filename = self.unique_id + retrieve_extension(secure_filename(kwargs['filename']))
         self.mime_type = self.get_mime_type()
+        if self.mime_type in HTML5_FORMATS:
+            self.html5 = True
+        else:
+            self.html5 = False
         self.filesize = self.get_filesize()
-        self.html5 = False
         self.pinned = False
 
     def __iter__(self):
@@ -156,8 +159,7 @@ class UserFile:
 
     def save_to_db(self):
         # Generate and save thumbnail if file is html5 video or image
-        if self.mime_type in HTML5_FORMATS:
-            self.html5 = True
+        if self.html5:
             if 'image' in self.mime_type:
                 self.save_thumbnail()
             elif 'video' in self.mime_type:
