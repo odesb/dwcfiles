@@ -52,19 +52,25 @@ MEME_SAYINGS = [
             '😂💯👌m👌MMMMᎷМ💯💯😂💯👌ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ😂💯💯👌'
             ]
 
+class DefaultSettings:
+    MONGO_HOST = 'localhost'
 
 app = Flask(__name__)
+
+app.config.from_object('dwcfiles.DefaultSettings')       # Development settings
+app.config.from_envvar('DWCFILES_SETTINGS', silent=True) # Production settings
+
+# Hamlish-jinja setup
+app.jinja_env.add_extension(HamlishExtension)
+app.jinja_env.hamlish_enable_div_shortcut = True
 
 # Secret key (used for CSRF protection and sessions)
 # To generate, execute this in a python shell:
 # import os
 # os.urandom(24)
-# And save it in 'secret_key' file
-app.secret_key = open(os.path.join(app.instance_path, 'secret_key'), 'rb').read()
-
-# Hamlish-jinja setup
-app.jinja_env.add_extension(HamlishExtension)
-app.jinja_env.hamlish_enable_div_shortcut = True
+# And save it in 'secret_key' file in instance folder
+with app.open_instance_resource('secret_key') as f:
+    app.secret_key = f.read()
 
 # Connect to the MongoDB database
 mongo = PyMongo(app)
