@@ -151,11 +151,11 @@ class UserFile:
     def save_thumbnail(self, video=False):
         thumb_filename = self.unique_id + '_thumb.png'
         if video:
-            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
+            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=self.actualfile.read(), stdout=sp.PIPE)
             f = completed.stdout
         elif not video:
             f = self.actualfile.read()
-            self.actualfile.seek(0, 0)
+        self.actualfile.seek(0, 0)
         im = Image.open(io.BytesIO(f))
         im.thumbnail((226, 160))
         thumb = io.BytesIO()
