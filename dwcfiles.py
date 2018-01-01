@@ -54,6 +54,7 @@ MEME_SAYINGS = [
 
 class DefaultSettings:
     MONGO_HOST = 'localhost'
+    DB_LOCATION = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
 
@@ -189,7 +190,7 @@ def home():
         flash('File successfully uploaded!')
         return redirect(url_for('get_userfile', userfile_id=userfile.unique_id))
     else:
-        fs_info = shutil.disk_usage(os.path.dirname(os.path.abspath(__file__)))
+        fs_info = shutil.disk_usage(app.config['DB_LOCATION'])
         context = {
                 'form': form,
                 'last_multimedia': mongo.db.userfiles.find({'html5': True}, limit=5, sort=[('_id', DESCENDING)]),
