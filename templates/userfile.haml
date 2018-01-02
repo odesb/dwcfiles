@@ -34,7 +34,7 @@
               %a href = "{{ userfile_url }}"
                 Direct link
             %p.control.has-icons-left
-              %input.input.is-success type = 'text' value = "files.dietwatr.com{{ userfile_url }}"
+              %input.input.is-success type = 'text' value = "{{ request.host }}{{ userfile_url }}"
               %span.icon.is-left
                 %i.fa.fa-link
     -else
