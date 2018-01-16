@@ -4,13 +4,19 @@
     -if userfile.html5
       .column.is-7.is-offset-1
         -if 'image' in userfile.mime_type
-          %figure.image
-            %img src = "{{ userfile_url }}"
+          %a.modal-open
+            %figure.image
+              %img src = "{{ userfile_url }}"
           .level
             .level-left
             .level-item
-              %a.button.is-primary.is-inverted
-                Fullscreen
+              %button
+          .modal
+            .modal-background
+            .modal-content
+              %p.image
+                %img src = "{{ userfile_url }}"
+            %button.modal-close.is-large aria-label = 'close'
         -elif 'video' in userfile.mime_type
           %video controls autoplay loop
             %source src = "{{ userfile_url }}" type = '{{ userfile.mime_type }}'

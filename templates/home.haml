@@ -35,6 +35,11 @@
                     = form.title(maxlength=100, class='input', placeholder='Title')
                     %span.icon.is-small.is-left
                       %i.fa.fa-file-o
+                .field
+                  .has-text-centered
+                    %label.checkbox
+                      = form.public()
+                      = form.public.label
                 .has-text-centered
                   %button.button.is-info#submit onclick = loadButton() type = 'submit'
                     Upload
