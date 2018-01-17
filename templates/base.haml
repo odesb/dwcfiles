@@ -13,25 +13,35 @@
     %header.section
       .container
         .columns
-          .column
+          .column.is-four-fifths
             %h1.title
               %a href = "{{ url_for('home') }}"
                 Dietwater File Hosting
             %h2.subtitle
               = meme_sayings|random()
-    -with messages = get_flashed_messages()
+          .column
+            .has-text-centered.mt-1
+              %a.is-size-5.cursor-no
+                API
+    -with messages = get_flashed_messages(with_categories=true)
       -if messages
         %section
           .container
             .columns
               .column.is-half.is-offset-one-quarter
                 %ul
-                  -for message in messages
+                  -for category, message in messages
                     %li
-                      %article.message.is-success
-                        .message-body
-                          .has-text-centered
-                            = message
+                      -if category == 'success'
+                        %article.message.is-success.mb-1
+                          .message-body
+                            .has-text-centered
+                              = message
+                      -elif category == 'warning'
+                        %article.message.is-warning.mb-2
+                          .message-body
+                            .has-text-centered
+                              = message
     %section.section
       .container
         .columns

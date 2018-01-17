@@ -170,3 +170,14 @@ input[type="checkbox"] {
     height: 100px;
 }
 
+.cursor-no {
+  cursor: default;
+}
+
+.mt-1 {
+  margin-top: 1em;
+}
+
+.mb-1 {
+  margin-bottom: 1em;
+}

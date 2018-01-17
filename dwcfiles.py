@@ -109,14 +109,14 @@ def retrieve_extension(filename):
 class FileUploadForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(max=100)])
     actualfile = FileField(validators=[FileRequired()])
-    public = BooleanField('Save as a public file?', default='checked')
+    frontpage = BooleanField('Show on the front page?', default='checked')
 
 
 class UserFile:
     def __init__(self, *args, **kwargs):
         self.title = kwargs['title']
         self.actualfile = kwargs['actualfile']
-        self.public = kwargs['public']
+        self.frontpage = kwargs['frontpage']
         self.unique_id = ''.join(secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(4))
         try:
             self.filename = self.unique_id + retrieve_extension(secure_filename(self.actualfile.filename))
@@ -189,17 +189,19 @@ def home():
         # validate_on_submit verifies if it is a POST request and if form is valid
         userfile = UserFile(title=form.title.data,
                             actualfile=form.actualfile.data,
-                            public=form.public.data,
+                            frontpage=form.frontpage.data,
                             )
         userfile.save_to_db()
-        flash('File successfully uploaded!')
+        flash('File successfully uploaded!', 'success')
+        if not userfile.frontpage:
+            flash("Write down the url because this file won't show up on the front page.", 'warning')
         return redirect(url_for('get_userfile', userfile_id=userfile.unique_id))
     else:
         fs_info = shutil.disk_usage(app.config['DB_LOCATION'])
         context = {
                 'form': form,
-                'last_multimedia': mongo.db.userfiles.find({'html5': True, 'public': True}, limit=5, sort=[('_id', DESCENDING)]),
-                'last_files': mongo.db.userfiles.find({'html5': False, 'public': True}, limit=5, sort=[('_id', DESCENDING)]),
+                'last_multimedia': mongo.db.userfiles.find({'html5': True, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
+                'last_files': mongo.db.userfiles.find({'html5': False, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
                 'used_space': space(fs_info[1]),
                 'total_space': space(fs_info[0]),
                 'percent_space': fs_info[1]/fs_info[0]*100,
@@ -212,7 +214,7 @@ def load_more():
     n = int(request.args.get('next'))
     html5 = bool(request.args.get('html5'))
     context = {
-            'more': mongo.db.userfiles.find({'html5': html5, 'public': True}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
+            'more': mongo.db.userfiles.find({'html5': html5, 'frontpage': True}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
             }
     return render_template('more.haml', **context)
 
@@ -243,7 +245,7 @@ def gallery():
 
 
 @app.route('/api/files', methods=['GET', 'POST'])
-def api():
+def api_files():
     if not request.is_json:
         abort(400)
     elif request.method == 'GET':

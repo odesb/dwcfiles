@@ -38,8 +38,8 @@
                 .field
                   .has-text-centered
                     %label.checkbox
-                      = form.public()
-                      = form.public.label
+                      = form.frontpage()
+                      = form.frontpage.label
                 .has-text-centered
                   %button.button.is-info#submit onclick = loadButton() type = 'submit'
                     Upload
@@ -49,9 +49,9 @@
         Latest multimedia files
       -for media in last_multimedia:
         %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
-          .flex-container style = "display: flex;align-items: center;"
+          .flex-container style = "display: flex;align-items: center;max-width: 100%;"
             -if 'image' in media.mime_type
-              .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});"
+              .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});flex-shrink: 0;"
             -elif 'video' in media.mime_type
               %div
                 .thumbnail.level style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});"
@@ -64,7 +64,7 @@
                   .level-item
                     %span.icon.is-medium
                       %i.fa.fa-volume-down
-            .block
+            .block style = 'white-space: no-wrap; overflow: hidden; text-overflow: ellipsis;'
               = media.title
               .content.is-small
                 .mime
