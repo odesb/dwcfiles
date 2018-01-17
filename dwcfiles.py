@@ -244,6 +244,11 @@ def gallery():
     return render_template('gallery.haml', **context)
 
 
+@app.route('/api')
+def api():
+    return render_template('api.haml')
+
+
 @app.route('/api/files', methods=['GET', 'POST'])
 def api_files():
     if not request.is_json:

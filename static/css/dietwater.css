@@ -181,3 +181,11 @@ input[type="checkbox"] {
 .mb-1 {
   margin-bottom: 1em;
 }
+
+#invis-border-cell {
+  border-style: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}

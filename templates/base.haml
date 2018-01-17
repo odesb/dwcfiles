@@ -21,7 +21,7 @@
               = meme_sayings|random()
           .column
             .has-text-centered.mt-1
-              %a.is-size-5.cursor-no
+              %a.is-size-5 href = "{{ url_for('api') }}"
                 API
     -with messages = get_flashed_messages(with_categories=true)
       -if messages
