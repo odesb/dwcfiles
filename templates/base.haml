@@ -21,8 +21,11 @@
               = meme_sayings|random()
           .column
             .has-text-centered.mt-1
-              %a.is-size-5 href = "{{ url_for('api') }}"
+              %a.is-size-5.mr-1 href = "{{ url_for('api') }}"
                 API
+              %a href = "https://github.com/xisbroken/dwcfiles" target = "_blank"
+                %span.icon
+                  %i.fa.fa-github.fa-lg
     -with messages = get_flashed_messages(with_categories=true)
       -if messages
         %section
@@ -38,10 +41,11 @@
                             .has-text-centered
                               = message
                       -elif category == 'warning'
-                        %article.message.is-warning.mb-2
+                        %article.message.is-warning
                           .message-body
                             .has-text-centered
                               = message
+    -block header
     %section.section
       .container
         .columns
