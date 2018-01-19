@@ -3,13 +3,7 @@
 
 # Development folders
 db/
-uploads/
 virtenv/
 __pycache__/
-
-# Old django stuff
-## To delete soon
-django_stuff/
-
-# Production stuff
 instance/
+dwcfiles.egg-info/
