@@ -1,6 +1,0 @@
-dwcfiles/__init__.py
-dwcfiles.egg-info/PKG-INFO
-dwcfiles.egg-info/SOURCES.txt
-dwcfiles.egg-info/dependency_links.txt
-dwcfiles.egg-info/requires.txt
-dwcfiles.egg-info/top_level.txt

@@ -1,48 +1,17 @@
 import base64
 import os
-import string
-import secrets
 import shutil
 import io
-import subprocess as sp
-from functools import wraps
-from magic import from_buffer
-from PIL import Image
 from dwcfiles import app
+from dwcfiles.models import UserFile
+from dwcfiles.utils import human_readable
 from flask import render_template, redirect, url_for, flash, request, abort, jsonify
 from hamlish_jinja import HamlishExtension
 from flask_pymongo import PyMongo, DESCENDING
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
-from werkzeug.utils import secure_filename
 from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired, Length
-
-
-HTML5_FORMATS = [
-        'audio/mp4',
-        'audio/mpeg',
-        'audio/webm',
-        'audio/ogg',
-        'audio/wav',
-        'audio/x-wav',
-        'audio/x-pn-wav',
-        'audio/flac',
-        'audio/x-flac',
-        'image/jpeg',
-        'image/gif',
-        'image/png',
-        'image/svg',
-        'image/bmp',
-        'video/webm',
-        'video/ogg',
-        'video/mp4'
-        ]
-
-
-UNCOMMON_EXTENSIONS = [
-        '.tar'
-        ]
 
 
 MEME_SAYINGS = [
@@ -58,9 +27,7 @@ class DefaultSettings:
     DB_LOCATION = os.path.dirname(os.path.abspath(__file__))
 
 
-app = Flask(__name__)
-
-app.config.from_object('dwcfiles.DefaultSettings')       # Development settings
+app.config.from_object('dwcfiles.views.DefaultSettings')       # Development settings
 app.config.from_envvar('DWCFILES_SETTINGS', silent=True) # Production settings
 
 # Hamlish-jinja setup
@@ -68,9 +35,9 @@ app.jinja_env.add_extension(HamlishExtension)
 app.jinja_env.hamlish_enable_div_shortcut = True
 
 # Secret key (used for CSRF protection and sessions)
-# To generate, execute this in a python shell:
-# import os
-# os.urandom(24)
+# To generate, execute this in a Python 3.6+ shell:
+# import secrets
+# secrets.token_bytes(24)
 # And save it in 'secret_key' file in instance folder
 with app.open_instance_resource('secret_key') as f:
     app.secret_key = f.read()
@@ -84,101 +51,11 @@ def meme_saying():
     return dict(meme_sayings=MEME_SAYINGS)
 
 
-def human_readable(func):
-    """Convert a number of bytes to a human readable format
-    """
-    @wraps(func)
-    def wrapper(self):
-        num_bytes = func(self)
-        suffixes = ['B', 'KB', 'MB', 'GB', 'TB']
-        suffixIndex = 0
-        while num_bytes > 1024 and suffixIndex < 5:
-            suffixIndex += 1
-            num_bytes = num_bytes/1024
-        final_suffix = suffixes[suffixIndex]
-        return f'{num_bytes:.2f} {suffixes[suffixIndex]}'
-    return wrapper
-
-
-def retrieve_extension(filename):
-    for ext in UNCOMMON_EXTENSIONS:
-        if ext in filename:
-            index = filename.find(ext)
-            return filename[index:]
-    return os.path.splitext(filename)[1]
-
-
 class FileUploadForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(max=100)])
     actualfile = FileField(validators=[FileRequired()])
     frontpage = BooleanField('Show on the front page?', default='checked')
 
-
-class UserFile:
-    def __init__(self, *args, **kwargs):
-        self.title = kwargs['title']
-        self.actualfile = kwargs['actualfile']
-        self.frontpage = kwargs['frontpage']
-        self.unique_id = ''.join(secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(4))
-        try:
-            self.filename = self.unique_id + retrieve_extension(secure_filename(self.actualfile.filename))
-        except AttributeError:
-            self.filename = self.unique_id + retrieve_extension(secure_filename(kwargs['filename']))
-        self.mime_type = self.get_mime_type()
-        if self.mime_type in HTML5_FORMATS:
-            self.html5 = True
-        else:
-            self.html5 = False
-        self.filesize = self.get_filesize()
-        self.pinned = False
-
-    def __iter__(self):
-        for key in vars(self):
-            if key != 'actualfile':
-                yield (key, getattr(self, key))
-
-    def get_mime_type(self):
-        """Retrieve mime type of the actual file
-        """
-        m = from_buffer(self.actualfile.read(), mime=True)
-        self.actualfile.seek(0, 0)
-        return m
-
-    @human_readable
-    def get_filesize(self):
-        """Retrieve file size of the actual file
-        """
-        self.actualfile.seek(0, 2)   # Change stream position to the end
-        filesize = self.actualfile.tell()
-        self.actualfile.seek(0, 0)   # Change stream position to the beginning
-        return filesize
-
-    def save_thumbnail(self, video=False):
-        thumb_filename = self.unique_id + '_thumb.png'
-        if video:
-            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=self.actualfile.read(), stdout=sp.PIPE)
-            f = completed.stdout
-        elif not video:
-            f = self.actualfile.read()
-        self.actualfile.seek(0, 0)
-        im = Image.open(io.BytesIO(f))
-        im.thumbnail((226, 160))
-        thumb = io.BytesIO()
-        im.save(thumb, 'png')
-        thumb.seek(0, 0)
-        mongo.save_file(thumb_filename, thumb)
-
-    def save_to_db(self):
-        # Generate and save thumbnail if file is html5 video or image
-        if self.html5:
-            if 'image' in self.mime_type:
-                self.save_thumbnail()
-            elif 'video' in self.mime_type:
-                self.save_thumbnail(video=True)
-        # Insert metadata in userfiles database
-        mongo.db.userfiles.insert_one(dict(self))
-        # Save actual file to GridFS
-        mongo.save_file(self.filename, self.actualfile)
 
 @human_readable
 def space(fs_info):
@@ -193,7 +70,7 @@ def home():
                             actualfile=form.actualfile.data,
                             frontpage=form.frontpage.data,
                             )
-        userfile.save_to_db()
+        userfile.save_to_db(mongo)
         flash('File successfully uploaded!', 'success')
         if not userfile.frontpage:
             flash("Write down the url because this file won't show up on the front page.", 'warning')
@@ -270,7 +147,7 @@ def api_files():
                 'actualfile': io.BytesIO(base64.b64decode(json['file'].encode())),
                 }
         userfile = UserFile(**d)
-        userfile.save_to_db()
+        userfile.save_to_db(mongo)
         response = {
                 'url': 'http://files.dietwatr.com{}'.format(url_for('get_userfile', userfile_id=userfile.unique_id)),
                 'direct_url': 'http://files.dietwatr.com{}'.format(url_for('uploaded_file', filename=userfile.filename)),
