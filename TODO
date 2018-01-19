@@ -5,11 +5,14 @@ FEATURES:
 - Drag and drop files
 - Zoom or fullscreen for images
 - Files browser (instead of clicking view more a thousand times)
-- Private files?
 - API for screenshots/file uploading from the desktop
 - Make tests
+- Purge jQuery
 
 BUGS:
 - Doesn't add extension if no extension was provided in the original filename
 - Panels in the home page columns are sometimes broken depending on device/resolution
 - FFmpeg unspecified pixel format (When this happens, send to not multimedia category)
+
+IN THE FUTURE:
+- Login system with dashboard (but still support anonymous upload)
