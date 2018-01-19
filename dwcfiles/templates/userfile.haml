@@ -4,18 +4,26 @@
     -if userfile.html5
       .column.is-7.is-offset-1
         -if 'image' in userfile.mime_type
-          %figure.image
-            %img src = "{{ userfile_url }}"
+          %a.modal-open
+            %figure.image
+              %img src = "{{ userfile_url }}"
+          .modal
+            .modal-background
+            .modal-content
+              %p.image
+                %img src = "{{ userfile_url }}"
+            %button.modal-close.is-large aria-label = 'close'
         -elif 'video' in userfile.mime_type
           %video controls autoplay loop
             %source src = "{{ userfile_url }}" type = '{{ userfile.mime_type }}'
         -elif 'audio' in userfile.mime_type
-          .test
-            %audio.audio controls
-              %source src = "{{ userfile_url }}"
+          ;.test
+          .spacer.is-hidden-touch
+          %audio.audio controls
+            %source src = "{{ userfile_url }}"
       .column.is-3
         .content#info
-          %h3.title
+          %h3.title style = 'word-wrap: break-word;'
             = userfile.title
           %dl
             %dt.label
@@ -24,11 +32,11 @@
             %dd
               = userfile.filesize
           .field
-            %label.label 
+            %label.label
               %a href = "{{ userfile_url }}"
                 Direct link
             %p.control.has-icons-left
-              %input.input.is-success type = 'text' value = "files.dietwatr.com{{ userfile_url }}"
+              %input.input.is-success type = 'text' value = "{{ request.host }}{{ userfile_url }}"
               %span.icon.is-left
                 %i.fa.fa-link
     -else

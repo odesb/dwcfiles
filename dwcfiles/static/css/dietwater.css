@@ -161,3 +161,35 @@ input[type="checkbox"] {
         padding-bottom: 20%;
     }
 }
+
+.audio {
+    width: 1000px;
+}
+
+.spacer {
+    height: 100px;
+}
+
+.cursor-no {
+  cursor: default;
+}
+
+.mr-1 {
+  margin-right: 1em;
+}
+
+.mt-1 {
+  margin-top: 1em;
+}
+
+.mb-1 {
+  margin-bottom: 1em;
+}
+
+#invis-border-cell {
+  border-style: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}

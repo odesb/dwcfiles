@@ -1,0 +1,7 @@
+Flask
+Flask-PyMongo
+Flask-WTF
+gunicorn
+Hamlish-Jinja
+Pillow
+python-magic

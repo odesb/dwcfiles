@@ -12,4 +12,4 @@ FEATURES:
 BUGS:
 - Doesn't add extension if no extension was provided in the original filename
 - Panels in the home page columns are sometimes broken depending on device/resolution
-- FFmpeg unspecified pixel format
+- FFmpeg unspecified pixel format (When this happens, send to not multimedia category)

@@ -15,7 +15,7 @@ from flask_pymongo import PyMongo, DESCENDING
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
-from wtforms import StringField
+from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired, Length
 
 
@@ -53,18 +53,27 @@ MEME_SAYINGS = [
             '😂💯👌m👌MMMMᎷМ💯💯😂💯👌ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ😂💯💯👌'
             ]
 
+class DefaultSettings:
+    MONGO_HOST = 'localhost'
+    DB_LOCATION = os.path.dirname(os.path.abspath(__file__))
+
+
+app = Flask(__name__)
+
+app.config.from_object('dwcfiles.DefaultSettings')       # Development settings
+app.config.from_envvar('DWCFILES_SETTINGS', silent=True) # Production settings
+
+# Hamlish-jinja setup
+app.jinja_env.add_extension(HamlishExtension)
+app.jinja_env.hamlish_enable_div_shortcut = True
 
 # Secret key (used for CSRF protection and sessions)
 # To generate, execute this in a python shell:
 # import os
 # os.urandom(24)
-# And save it in 'secret_key' file
-with open(os.path.join(app.instance_path, 'secret_key'), 'rb') as f:
+# And save it in 'secret_key' file in instance folder
+with app.open_instance_resource('secret_key') as f:
     app.secret_key = f.read()
-
-# Hamlish-jinja setup
-app.jinja_env.add_extension(HamlishExtension)
-app.jinja_env.hamlish_enable_div_shortcut = True
 
 # Connect to the MongoDB database
 mongo = PyMongo(app)
@@ -102,20 +111,25 @@ def retrieve_extension(filename):
 class FileUploadForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(max=100)])
     actualfile = FileField(validators=[FileRequired()])
+    frontpage = BooleanField('Show on the front page?', default='checked')
 
 
 class UserFile:
     def __init__(self, *args, **kwargs):
         self.title = kwargs['title']
         self.actualfile = kwargs['actualfile']
+        self.frontpage = kwargs['frontpage']
         self.unique_id = ''.join(secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(4))
         try:
             self.filename = self.unique_id + retrieve_extension(secure_filename(self.actualfile.filename))
         except AttributeError:
             self.filename = self.unique_id + retrieve_extension(secure_filename(kwargs['filename']))
         self.mime_type = self.get_mime_type()
+        if self.mime_type in HTML5_FORMATS:
+            self.html5 = True
+        else:
+            self.html5 = False
         self.filesize = self.get_filesize()
-        self.html5 = False
         self.pinned = False
 
     def __iter__(self):
@@ -142,11 +156,11 @@ class UserFile:
     def save_thumbnail(self, video=False):
         thumb_filename = self.unique_id + '_thumb.png'
         if video:
-            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=f.read(), stdout=sp.PIPE)
+            completed = sp.run(['ffmpeg', '-i', '-', '-ss', '00:00:01', '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'], input=self.actualfile.read(), stdout=sp.PIPE)
             f = completed.stdout
         elif not video:
             f = self.actualfile.read()
-            self.actualfile.seek(0, 0)
+        self.actualfile.seek(0, 0)
         im = Image.open(io.BytesIO(f))
         im.thumbnail((226, 160))
         thumb = io.BytesIO()
@@ -156,8 +170,7 @@ class UserFile:
 
     def save_to_db(self):
         # Generate and save thumbnail if file is html5 video or image
-        if self.mime_type in HTML5_FORMATS:
-            self.html5 = True
+        if self.html5:
             if 'image' in self.mime_type:
                 self.save_thumbnail()
             elif 'video' in self.mime_type:
@@ -176,16 +189,21 @@ def home():
     form = FileUploadForm()
     if form.validate_on_submit():
         # validate_on_submit verifies if it is a POST request and if form is valid
-        userfile = UserFile(title=form.title.data, actualfile=form.actualfile.data)
+        userfile = UserFile(title=form.title.data,
+                            actualfile=form.actualfile.data,
+                            frontpage=form.frontpage.data,
+                            )
         userfile.save_to_db()
-        flash('File successfully uploaded!')
+        flash('File successfully uploaded!', 'success')
+        if not userfile.frontpage:
+            flash("Write down the url because this file won't show up on the front page.", 'warning')
         return redirect(url_for('get_userfile', userfile_id=userfile.unique_id))
     else:
-        fs_info = shutil.disk_usage(os.path.dirname(os.path.abspath(__file__)))
+        fs_info = shutil.disk_usage(app.config['DB_LOCATION'])
         context = {
                 'form': form,
-                'last_multimedia': mongo.db.userfiles.find({'html5': True}, limit=5, sort=[('_id', DESCENDING)]),
-                'last_files': mongo.db.userfiles.find({'html5': False}, limit=5, sort=[('_id', DESCENDING)]),
+                'last_multimedia': mongo.db.userfiles.find({'html5': True, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
+                'last_files': mongo.db.userfiles.find({'html5': False, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
                 'used_space': space(fs_info[1]),
                 'total_space': space(fs_info[0]),
                 'percent_space': fs_info[1]/fs_info[0]*100,
@@ -198,7 +216,7 @@ def load_more():
     n = int(request.args.get('next'))
     html5 = bool(request.args.get('html5'))
     context = {
-            'more': mongo.db.userfiles.find({'html5': html5}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
+            'more': mongo.db.userfiles.find({'html5': html5, 'frontpage': True}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
             }
     return render_template('more.haml', **context)
 
@@ -228,8 +246,13 @@ def gallery():
     return render_template('gallery.haml', **context)
 
 
-@app.route('/api/files', methods=['GET', 'POST'])
+@app.route('/api')
 def api():
+    return render_template('api.haml')
+
+
+@app.route('/api/files', methods=['GET', 'POST'])
+def api_files():
     if not request.is_json:
         abort(400)
     elif request.method == 'GET':
@@ -240,7 +263,6 @@ def api():
             response[x] = doc
         return jsonify(response)
     elif request.method == 'POST':
-
         json = request.get_json()
         d = {
                 'title': json['title'],
