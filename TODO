@@ -8,6 +8,7 @@ FEATURES:
 - API for screenshots/file uploading from the desktop
 - Make tests
 - Purge jQuery
+- Progress bar for file upload
 
 BUGS:
 - Doesn't add extension if no extension was provided in the original filename
