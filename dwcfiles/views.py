@@ -122,6 +122,7 @@ def gallery():
     }
     return render_template('gallery.haml', **context)
 
+### API ###
 
 @app.route('/api')
 def api():
@@ -129,7 +130,7 @@ def api():
 
 
 @app.route('/api/files', methods=['GET', 'POST'])
-def api_files():
+def api_collection():
     if not request.is_json:
         abort(400)
     elif request.method == 'GET':
@@ -144,15 +145,22 @@ def api_files():
         d = {
                 'title': json['title'],
                 'filename': json['filename'],
-                'actualfile': io.BytesIO(base64.b64decode(json['file'].encode())),
+                'actualfile': io.BytesIO(base64.b64decode(json['file'])),
+                'frontpage': json['public'],
                 }
         userfile = UserFile(**d)
         userfile.save_to_db(mongo)
         response = {
-                'url': 'http://files.dietwatr.com{}'.format(url_for('get_userfile', userfile_id=userfile.unique_id)),
-                'direct_url': 'http://files.dietwatr.com{}'.format(url_for('uploaded_file', filename=userfile.filename)),
+                'url': '{0}{1}'.format(request.host, url_for('get_userfile', userfile_id=userfile.unique_id)),
+                'direct_url': '{0}{1}'.format(request.host, url_for('uploaded_file', filename=userfile.filename)),
                 }
         return jsonify(response), 201
 
-
+@app.route('/api/files/<unique_id>')
+def api_file(unique_id):
+    if not request.is_json:
+        abort(400)
+    userfile = mongo.db.userfiles.find_one({'unique_id': unique_id})
+    del userfile['_id']
+    return jsonify(userfile)
 

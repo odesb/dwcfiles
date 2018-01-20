@@ -36,12 +36,12 @@
                   -for category, message in messages
                     %li
                       -if category == 'success'
-                        %article.message.is-success.mb-1
+                        %article.message.is-success.mb-1.flash
                           .message-body
                             .has-text-centered
                               = message
                       -elif category == 'warning'
-                        %article.message.is-warning
+                        %article.message.is-warning.flash
                           .message-body
                             .has-text-centered
                               = message
