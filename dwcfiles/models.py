@@ -1,6 +1,5 @@
 import io
 import secrets
-import string
 import subprocess as sp
 from dwcfiles.utils import human_readable, retrieve_extension
 from PIL import Image
@@ -37,7 +36,7 @@ class UserFile:
         self.title = kwargs['title']
         self.actualfile = kwargs['actualfile']
         self.frontpage = kwargs['frontpage']
-        self.unique_id = ''.join(secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(4))
+        self.unique_id = secrets.token_urlsafe(3)
         try:
             self.filename = self.unique_id + retrieve_extension(secure_filename(self.actualfile.filename))
         except AttributeError:
