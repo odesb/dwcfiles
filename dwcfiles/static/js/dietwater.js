@@ -1,3 +1,34 @@
+/* Function definitions */
+
+// User uploaded file modal events (open and close)
+function modalEvents() {
+  var modal = document.querySelector('.modal');
+  var modal_open = document.querySelector('.modal-open');
+  var modal_background = document.querySelector('.modal-background');
+  var modal_close = document.querySelector('.modal-close');
+
+  function toggleModalClass() {
+    modal.classList.toggle('is-active');
+  }
+
+  // Open event
+  modal_open.addEventListener('click', toggleModalClass);
+  // Close events
+  modal_background.addEventListener('click', toggleModalClass);
+  modal_close.addEventListener('click', toggleModalClass);
+}
+
+// Extract filename from file "loaded" in browser
+function extractFilenameEvent() {
+  var file = document.querySelector('#actualfile');
+  file.addEventListener('change', function() {
+    var filename = file.files[0].name;
+    document.querySelector('#title').value = filename;
+  });
+}
+
+
+/*
 (function() {
   var multimediaButton = $('button.multimedia');
   var media_next = 1;
@@ -24,26 +55,4 @@ var d = document.getElementById('submit');
 function loadButton() {
   d.classList.add('is-loading');
 }
-(function() {
-  var file = $('#actualfile');
-  var filename = $('#title');
-  file.change(function() {
-    var clean=file.val().split('\\').pop();
-    filename.val(clean);
-  });
-})();
-(function() {
-  var modal_close = $('.modal-close');
-  var modal_background = $('.modal-background');
-  var modal_open = $('.modal-open');
-  modal_open.on('click', function() {
-    $(this).siblings('.modal').toggleClass('is-active');
-  });
-  modal_background.on('click', function() {
-    $(this).parents('.modal').toggleClass('is-active');
-  });
-  modal_close.on('click', function() {
-    $(this).parents('.modal').toggleClass('is-active');
-  });
-})();
-
+*/
