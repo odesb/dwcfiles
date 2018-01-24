@@ -5,8 +5,11 @@
     %meta name = 'viewport' content = 'width=device-width, initial-scale=1'
     %title
       Dietwater File Hosting
-    %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='css/bulma.css') }}"
-    %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='font-awesome/css/font-awesome.css')}}"
+    -if config.DEBUG
+      %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='css/bulma.css') }}"
+    -else
+      %link rel = 'stylesheet' type = 'text/css' href = 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css'
+    %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='font-awesome/css/font-awesome.css') }}"
     %link rel = 'stylesheet' type = 'text/css' href = "{{ url_for('static', filename='css/dietwater.css') }}"
     %link rel = 'icon' type = 'image/png' href = "{{ url_for('static', filename='img/favicon.png') }}"
   %body
@@ -50,5 +53,17 @@
       .container
         .columns
           -block main
+    .is-invisible#bulmaCssTest
+    %script
+      (function() {
+        var bulmaTest = document.querySelector('#bulmaCssTest');
+        if (getComputedStyle(bulmaTest).visibility !== 'hidden') {
+          var local = document.createElement('link');
+          local.type = 'text/css';
+          local.rel = 'stylesheet';
+          local.href = "{{ url_for('static', filename='css/bulma.css') }}";
+          document.head.appendChild(local);
+        }
+      })();
     %script src = "{{ url_for('static', filename='js/dietwater.js') }}"
     -block scripts

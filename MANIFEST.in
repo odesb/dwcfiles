@@ -1,0 +1,2 @@
+recursive-include dwcfiles/templates *
+recursive-include dwcfiles/static *
