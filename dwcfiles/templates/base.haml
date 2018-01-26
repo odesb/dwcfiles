@@ -16,12 +16,16 @@
     %header.section
       .container
         .columns
-          .column.is-four-fifths
+          .column.is-half
             %h1.title
               %a href = "{{ url_for('home') }}"
                 Dietwater File Hosting
             %h2.subtitle
               = meme_sayings|random()
+          .column
+            .has-text-right
+              %a.toggle-uploader.button.is-danger.is-rounded style = 'margin-top: 0.80em;'
+                Upload file
           .column
             .has-text-centered.mt-1
               %a.is-size-5.mr-1 href = "{{ url_for('api') }}"
@@ -29,6 +33,54 @@
               %a href = "https://github.com/xisbroken/dwcfiles" target = "_blank"
                 %span.icon
                   %i.fa.fa-github.fa-lg
+        .box#uploader.is-gone style = 'position: absolute;left: 50%;top: 100%;z-index: 1;width: 400px;'
+          .columns
+            .column
+              .has-text-right
+                %button.delete.is-info.toggle-uploader
+          .columns.is-centered
+            .column.is-two-thirds
+              %form action = '/' method = 'post' enctype = 'multipart/form-data'
+                {{ form.csrf_token }}
+                .columns.is-mobile
+                  .column
+                    .field.field-custom
+                      %p.control
+                        -if form.actualfile.errors
+                          %ul
+                            -for error in form.actualfile.errors
+                              %li
+                                %p.help.is-danger
+                                  = error
+                        .file.has-name.is-centered
+                          %label.file-label
+                            = form.actualfile(class="file-input")
+                            %span.file-cta
+                              %span.file-icon
+                                %i.fa.fa-upload
+                              %span.file-label
+                                Choose a file...
+                    .field.field-custom
+                      -if form.title.errors
+                        %ul
+                          -for error in form.title.errors
+                            %li
+                              %p.help.is-danger
+                                = error
+                      %p.control.has-icons-left
+                        = form.title(maxlength=100, class='input', placeholder='Title')
+                        %span.icon.is-small.is-left
+                          %i.fa.fa-file-o
+                    .field
+                      .has-text-centered
+                        %label.checkbox
+                          = form.frontpage()
+                          = form.frontpage.label
+                    .has-text-centered
+                      %button.button.is-info#submit onclick = loadButton() type = 'submit'
+                        Upload
+
+
     -with messages = get_flashed_messages(with_categories=true)
       -if messages
         %section
@@ -51,8 +103,9 @@
     -block header
     %section.section
       .container
+        -block main
         .columns
-          -block main
+          -block extra
     .is-invisible#bulmaCssTest
     %script
       (function() {
@@ -66,4 +119,6 @@
         }
       })();
     %script src = "{{ url_for('static', filename='js/dietwater.js') }}"
+    %script
+      toggleUploader();extractFilenameEvent();
     -block scripts

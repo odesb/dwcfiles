@@ -14,6 +14,8 @@ BUGS:
 - Doesn't add extension if no extension was provided in the original filename
 - Panels in the home page columns are sometimes broken depending on device/resolution
 - FFmpeg unspecified pixel format (When this happens, send to not multimedia category)
+- OSError: cannot identify image file <_io.BytesIO object at 0x7f29195b7bf8> with m4a upload
+
 
 IN THE FUTURE:
 - Login system with dashboard (but still support anonymous upload)

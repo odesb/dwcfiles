@@ -193,3 +193,7 @@ input[type="checkbox"] {
 .table-scroll {
   overflow-x: auto;
 }
+
+.is-gone {
+  display: none;
+}

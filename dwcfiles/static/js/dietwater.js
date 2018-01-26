@@ -1,5 +1,16 @@
 /* Function definitions */
 
+// Show/hide the file uploader
+function toggleUploader() {
+  var togglers = document.getElementsByClassName('toggle-uploader');
+  var uploader = document.querySelector('#uploader');
+  Array.from(togglers).forEach(function(el) {
+    el.addEventListener('click', function() {
+      uploader.classList.toggle('is-gone');
+    });
+  });
+}
+
 // User uploaded file modal events (open and close)
 function modalEvents() {
   var modal = document.querySelector('.modal');

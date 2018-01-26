@@ -79,7 +79,7 @@ def home():
         fs_info = shutil.disk_usage(app.config['DB_LOCATION'])
         context = {
                 'form': form,
-                'last_multimedia': mongo.db.userfiles.find({'html5': True, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
+                'last_multimedia': mongo.db.userfiles.find({'frontpage': True}, sort=[('_id', DESCENDING)]),
                 'last_files': mongo.db.userfiles.find({'html5': False, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
                 'used_space': space(fs_info[1]),
                 'total_space': space(fs_info[0]),
@@ -106,8 +106,11 @@ def next_page():
 
 @app.route('/<userfile_id>')
 def get_userfile(userfile_id):
-    userfile = mongo.db.userfiles.find_one_or_404({'unique_id': userfile_id})
-    return render_template('userfile.haml', userfile=userfile)
+    context = {
+        'form': FileUploadForm(),
+        'userfile': mongo.db.userfiles.find_one_or_404({'unique_id': userfile_id})
+        }
+    return render_template('userfile.haml', **context)
 
 
 @app.route('/ul/<filename>')
@@ -126,7 +129,8 @@ def gallery():
 
 @app.route('/api')
 def api():
-    return render_template('api.haml')
+    form = FileUploadForm()
+    return render_template('api.haml', form=form)
 
 
 @app.route('/api/files', methods=['GET', 'POST'])

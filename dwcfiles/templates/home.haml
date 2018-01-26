@@ -8,103 +8,36 @@
           &nbsp;If you have any problems or suggestions, feel free to create an issue or a pull request on <a href="https://github.com/xisbroken/dwcfiles">GitHub</a>.
 
 -block main
-  .column.is-two-thirds
-    .box
-      .columns
-        .column.is-half.is-offset-one-quarter
-          %form action = '' method = 'post' enctype = 'multipart/form-data'
-            {{ form.csrf_token }}
-            .columns.is-mobile
-              .column
-                .field.field-custom
-                  %p.control
-                    -if form.actualfile.errors
-                      %ul
-                        -for error in form.actualfile.errors
-                          %li
-                            %p.help.is-danger
-                              = error
-                    .file.has-name.is-centered
-                      %label.file-label
-                        = form.actualfile(class="file-input")
-                        %span.file-cta
-                          %span.file-icon
-                            %i.fa.fa-upload
-                          %span.file-label
-                            Choose a file...
-                .field.field-custom
-                  -if form.title.errors
-                    %ul
-                      -for error in form.title.errors
-                        %li
-                          %p.help.is-danger
-                            = error
-                  %p.control.has-icons-left
-                    = form.title(maxlength=100, class='input', placeholder='Title')
-                    %span.icon.is-small.is-left
-                      %i.fa.fa-file-o
-                .field
-                  .has-text-centered
-                    %label.checkbox
-                      = form.frontpage()
-                      = form.frontpage.label
-                .has-text-centered
-                  %button.button.is-info#submit onclick = loadButton() type = 'submit'
-                    Upload
-  .column.is-4
-    .panel#multimedia
-      %p.panel-heading
-        Latest multimedia files
-      -for media in last_multimedia:
-        %a.panel-block.is-paddingless href = "/{{ media.unique_id }}"
-          .flex-container style = "display: flex;align-items: center;max-width: 100%;"
-            -if 'image' in media.mime_type
-              .thumbnail style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});flex-shrink: 0;"
-            -elif 'video' in media.mime_type
-              %div
-                .thumbnail.level style = "background-image: url({{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }});"
-                  .level-item
-                    %span.icon.is-medium
-                      %i.fa.fa-play
-            -elif 'audio' in media.mime_type
-              %div
-                .thumbnail.level
-                  .level-item
-                    %span.icon.is-medium
-                      %i.fa.fa-volume-down
-            .block style = 'white-space: no-wrap; overflow: hidden; text-overflow: ellipsis;'
-              = media.title
-              .content.is-small
-                .mime
-                  = media.mime_type|upper
-      .panel-block
-        %button.button.is-info.is-outlined.is-fullwidth.multimedia
-          View more
-    .panel
-      %p.panel-heading
-        Last uploaded files
-      -for userfile in last_files
-        %a.panel-block.is-paddingless href = "/{{ userfile.unique_id }}"
-          .flex-container style = "display: flex; align-items: center; max-width:100%;"
-            %div
-              .thumbnail.level
-                .level-item
-                  %span.icon.is-medium style = 'height: 50px; width: 50px;'
-                    ;%i.fa.fa-file-o aria-hidden = 'true'
-                    %img src = "{{ url_for('static', filename='img/icon-download.png') }}"
-            .block style = "overflow: hidden;"
-              = userfile.title
-              .content.is-small
-                .mime
-                  = userfile.mime_type|upper
-      .panel-block
-        %button.button.is-info.is-outlined.is-fullwidth.other
-          View more
-    %progress.progress.is-info value = '{{ percent_space }}' max = '100'
-      = percent_space
-    %p.has-text-centered
-      {{ used_space }} / {{ total_space }}
-
--block scripts
-  %script
-    extractFilenameEvent();
+  .columns
+    .column
+      %h2.title
+        Browse public files
+-block extra
+  -for column in last_multimedia|slice(2):
+    .column.is-4
+      -for media in column
+        .box.is-radiusless
+          %article.media
+            %figure.media-left
+              %p.image.is-48x48
+                -if 'image' in media.mime_type:
+                  %img src = '/static/img/icon-download3.png'
+                -elif 'audio' in media.mime_type:
+                  %img src = '/static/img/icon-download5.png'
+                -elif 'video' in media.mime_type:
+                  %img src = '/static/img/icon-download6.png'
+                -else:
+                  %img src = '/static/img/icon-download4.png'
+            .media-content
+              .content
+                %p style = 'margin-bottom: 0.25em;'
+                  = media.title
+                %span.tag.is-info
+                  = media.mime_type
+            .media-right
+              %p.is-size-7.has-text-grey
+                Uploaded: 23/03/2017
+              %p.is-size-7.has-text-grey.has-text-right.mt-1
+                = media.filesize
+  .column
+    %img src = '/static/img/test.jpg'
