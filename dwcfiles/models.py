@@ -92,7 +92,7 @@ class UserFile:
             if 'image' in self.mime_type:
                 self.save_thumbnail(mongo_instance)
             elif 'video' in self.mime_type:
-                self.save_thumbnail(video=True)
+                self.save_thumbnail(mongo_instance, video=True)
         # Insert metadata in userfiles database
         mongo_instance.db.userfiles.insert_one(dict(self))
         # Save actual file to GridFS
