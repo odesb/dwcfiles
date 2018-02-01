@@ -2,13 +2,20 @@
 
 // Show/hide the file uploader
 function toggleUploader() {
-  var togglers = document.getElementsByClassName('toggle-uploader');
+  var togglers = document.querySelectorAll('.toggle-uploader');
   var uploader = document.querySelector('#uploader');
+  var overlay = document.querySelector('#uploader-overlay');
+
+  function toggleDisplay() {
+    uploader.classList.toggle('is-gone');
+    overlay.classList.toggle('is-gone');
+  }
+
   Array.from(togglers).forEach(function(el) {
-    el.addEventListener('click', function() {
-      uploader.classList.toggle('is-gone');
-    });
+    el.addEventListener('click', toggleDisplay);
   });
+  // If user clicks on overlay, close uploader
+  overlay.addEventListener('click', toggleDisplay);
 }
 
 // User uploaded file modal events (open and close)

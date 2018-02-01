@@ -22,9 +22,8 @@
                 Dietwater File Hosting
             %h2.subtitle
               = meme_sayings|random()
-          .column
-            .has-text-right
-              %a.toggle-uploader.button.is-danger.is-rounded style = 'margin-top: 0.80em;'
+          .column.has-text-centered
+            %a.toggle-uploader.button.is-danger.is-rounded style = 'margin-top: 0.80em;'
                 Upload file
           .column
             .has-text-centered.mt-1
@@ -33,7 +32,8 @@
               %a href = "https://github.com/xisbroken/dwcfiles" target = "_blank"
                 %span.icon
                   %i.fa.fa-github.fa-lg
-        .box#uploader.is-gone style = 'position: absolute;left: 50%;top: 100%;z-index: 1;width: 400px;'
+        #uploader-overlay.is-gone
+        .box#uploader.is-gone
           .columns
             .column
               .has-text-right
