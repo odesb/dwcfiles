@@ -79,7 +79,7 @@ def home():
         fs_info = shutil.disk_usage(app.config['DB_LOCATION'])
         context = {
                 'form': form,
-                'last_multimedia': mongo.db.userfiles.find({'frontpage': True}, sort=[('_id', DESCENDING)]),
+                'last_multimedia': mongo.db.userfiles.find({'frontpage': True}, limit=15, sort=[('_id', DESCENDING)]),
                 'last_files': mongo.db.userfiles.find({'html5': False, 'frontpage': True}, limit=5, sort=[('_id', DESCENDING)]),
                 'used_space': space(fs_info[1]),
                 'total_space': space(fs_info[0]),
@@ -93,7 +93,7 @@ def load_more():
     n = int(request.args.get('next'))
     html5 = bool(request.args.get('html5'))
     context = {
-            'more': mongo.db.userfiles.find({'html5': html5, 'frontpage': True}, skip=5*n, limit=5, sort=[('_id', DESCENDING)])
+            'more': list(mongo.db.userfiles.find({'html5': html5, 'frontpage': True}, skip=15-3+n, limit=3, sort=[('_id', DESCENDING)]))
             }
     return render_template('more.haml', **context)
 

@@ -183,6 +183,18 @@ input[type="checkbox"] {
   margin-bottom: 1em;
 }
 
+.pt-1 {
+  padding-top: 1em;
+}
+
+.pb-1 {
+  padding-bottom: 1em;
+}
+
+.p-1 {
+  padding: 1em;
+}
+
 #invis-border-cell {
   border-style: hidden;
 }
@@ -212,3 +224,28 @@ input[type="checkbox"] {
   z-index: 2;
   //width: 600px;
 }
+
+.userfile {
+  border: 1px solid white;
+}
+
+.userfile:hover {
+  border: 1px solid lightblue;
+}
+
+.userfile img {
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+  width: auto;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.center-flex {
+  align-items: center;
+  justify-content: center;
+}
+
