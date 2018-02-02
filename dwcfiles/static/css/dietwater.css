@@ -183,6 +183,10 @@ input[type="checkbox"] {
   margin-bottom: 1em;
 }
 
+.mb-1-5 {
+  margin-bottom: 1.5em;
+}
+
 .pt-1 {
   padding-top: 1em;
 }

@@ -21,7 +21,7 @@
     .column.is-2
       -for media in column
         %a href = '{{ media.unique_id }}'
-          .userfile.has-text-centered.p-1.mb-1
+          .userfile.has-text-centered.p-1.mb-1-5 style = 'background-color: #E6F9FF';
             %figure.image.mb-1 style = 'margin-left: auto;margin-right: auto;height: 48px;'
               -if 'image' in media.mime_type:
                 %img src = "{{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
