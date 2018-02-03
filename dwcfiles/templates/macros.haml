@@ -1,0 +1,19 @@
+-macro gallery_file(userfile):
+  %a.no-outline href = '{{ userfile.unique_id }}'
+    .userfile.has-text-centered.p-1.mb-1-5 style = 'background-color: lightblue';
+      %figure.image.mb-1 style = 'margin-left: auto;margin-right: auto;height: 48px;'
+        -if 'image' in userfile.mime_type:
+          %img src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
+        -elif 'audio' in userfile.mime_type:
+          %img src = '/static/img/icon-download5.png'
+        -elif 'video' in userfile.mime_type:
+          %img src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
+        -else:
+          %img src = '/static/img/icon-download4.png'
+      %p style = 'overflow: hidden;white-space: nowrap;font-size: 0.9em;'
+        = userfile.title
+      %p.has-text-grey style = 'overflow: hidden;white-space: nowrap;font-size: 0.8em;'
+        -if userfile.upload_date is defined
+           = userfile.upload_date
+        -else
+          \-

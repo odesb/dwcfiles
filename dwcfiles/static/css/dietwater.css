@@ -229,12 +229,16 @@ input[type="checkbox"] {
   //width: 600px;
 }
 
+.no-outline, .no-outline:active, .no-outline:focus {
+  outline: 0;
+}
+
 .userfile {
   border: 1px solid white;
 }
 
 .userfile:hover {
-  border: 1px solid lightblue;
+  border: 1px solid #73ADC0;
 }
 
 .userfile img {
@@ -253,3 +257,10 @@ input[type="checkbox"] {
   justify-content: center;
 }
 
+
+#uploader {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 650px;
+  max-width: 100%;
+}

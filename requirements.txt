@@ -5,6 +5,7 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 click==6.7                # via flask
+flask-assets==0.12
 flask-pymongo==0.5.1
 flask-wtf==0.14.2
 flask==0.12.2
@@ -16,5 +17,6 @@ markupsafe==1.0           # via jinja2
 pillow==5.0.0
 pymongo==3.6.0            # via flask-pymongo
 python-magic==0.4.15
+webassets==0.12.1         # via flask-assets
 werkzeug==0.14.1          # via flask
 wtforms==2.1              # via flask-wtf

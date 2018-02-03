@@ -1,6 +1,7 @@
 import io
 import secrets
 import subprocess as sp
+import time
 from dwcfiles.utils import human_readable, retrieve_extension
 from PIL import Image
 from magic import from_buffer
@@ -37,6 +38,7 @@ class UserFile:
         self.actualfile = kwargs['actualfile']
         self.frontpage = kwargs['frontpage']
         self.unique_id = secrets.token_urlsafe(3)
+        self.upload_date = time.strftime('%Y-%m-%dT%H:%M:%S%Z', time.gmtime())
         try:
             self.filename = self.unique_id + retrieve_extension(secure_filename(self.actualfile.filename))
         except AttributeError:

@@ -1,4 +1,6 @@
+-from 'macros.haml' import gallery_file
 -extends 'base.haml'
+
 -block header
   %section.section.pt-1.pb-1
     .container
@@ -12,59 +14,30 @@
     .column
       %h2.title
         Browse latest public files
+
 -block extra
   .column.is-1
     .flex-container.center-flex style = 'height: 100%;'
       .flex-container.center-flex#load-less style = 'height: 45px;width: 45px;border-radius: 50%;box-shadow: 0 0 3px black;cursor: pointer;'
         %i.fa.fa-chevron-left
-  -for column in last_multimedia|slice(5):
+  -for column in latest_files|slice(5):
     .column.is-2
       -for media in column
-        %a href = '{{ media.unique_id }}'
-          .userfile.has-text-centered.p-1.mb-1-5 style = 'background-color: #E6F9FF';
-            %figure.image.mb-1 style = 'margin-left: auto;margin-right: auto;height: 48px;'
-              -if 'image' in media.mime_type:
-                %img src = "{{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
-              -elif 'audio' in media.mime_type:
-                %img src = '/static/img/icon-download5.png'
-              -elif 'video' in media.mime_type:
-                %img src = "{{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
-              -else:
-                %img src = '/static/img/icon-download4.png'
-            %p style = 'overflow: hidden;white-space: nowrap;font-size: 0.9em;'
-              = media.title
-            %p.has-text-grey style = 'overflow: hidden;white-space: nowrap;font-size: 0.8em;'
-              23/03/2017 14:00UTC
+        = gallery_file(media)
   .column.is-1
     .flex-container.center-flex style = 'height: 100%;'
       .flex-container.center-flex#load-more style = 'height: 45px;width: 45px;border-radius: 50%;box-shadow: 0 0 3px black;cursor: pointer;'
         %i.fa.fa-chevron-right
 
+-block footer
+  .container
+    .columns.is-centered
+      .column.is-one-third.has-text-centered
+        %progress.progress.is-info value = {{ percent_space }} min = 0 max = 100
+        %p
+          {{ used_space }} / {{ total_space }}
+
+
 -block scripts
   %script
-    addEventButtonLess();addEventButtonMore();
-
-
-          ;.box.is-radiusless.mb-1
-          ;  %article.media
-          ;    %figure.media-left
-          ;      %p.image.is-48x48
-          ;        -if 'image' in media.mime_type:
-          ;          %img src = "{{ url_for('uploaded_file', filename=media.filename) }}"
-          ;        -elif 'audio' in media.mime_type:
-          ;          %img src = '/static/img/icon-download5.png'
-          ;        -elif 'video' in media.mime_type:
-          ;          %img src = "{{ url_for('uploaded_file', filename=media.unique_id + '_thumb.png') }}"
-          ;        -else:
-          ;          %img src = '/static/img/icon-download4.png'
-          ;    .media-content
-          ;      .content
-          ;        %p.is-size-7 style = 'margin-bottom: 0.25em;'
-          ;          = media.title
-          ;        %span.tag.is-info
-          ;          = media.mime_type
-              ;.media-right
-              ;  %p.is-size-7.has-text-grey
-              ;    Uploaded: 23/03/2017
-              ;  %p.is-size-7.has-text-grey.has-text-right.mt-1
-              ;    = media.filesize
+    ajaxButtonsEvents();
