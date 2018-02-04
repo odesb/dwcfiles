@@ -1,18 +1,18 @@
 -macro gallery_file(userfile):
   %a.no-outline href = '{{ userfile.unique_id }}'
-    .userfile.has-text-centered.p-1.mb-1-5 style = 'background-color: lightblue';
-      %figure.image.mb-1 style = 'margin-left: auto;margin-right: auto;height: 48px;'
+    .userfile.has-text-centered.p-1.mb-1-5
+      %figure.image.mb-1.m-center
         -if 'image' in userfile.mime_type:
-          %img src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
+          %img.shadow src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}"
         -elif 'audio' in userfile.mime_type:
-          %img src = '/static/img/icon-download5.png'
+          %img.shadow.rounded-border src = '/static/img/icon-download5.png'
         -elif 'video' in userfile.mime_type:
-          %img src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}" style = 'box-shadow: 2px 2px lightblue;'
+          %img.shadow src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}"
         -else:
-          %img src = '/static/img/icon-download4.png'
-      %p style = 'overflow: hidden;white-space: nowrap;font-size: 0.9em;'
+          %img.shadow.rounded-border src = '/static/img/icon-download4.png'
+      %p.no-overflow.no-wrap.is-size-7
         = userfile.title
-      %p.has-text-grey style = 'overflow: hidden;white-space: nowrap;font-size: 0.8em;'
+      %p.has-text-grey.no-overflow.no-wrap.is-size-7
         -if userfile.upload_date is defined
            = userfile.upload_date
         -else

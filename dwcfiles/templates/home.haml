@@ -15,19 +15,20 @@
       %h2.title
         Browse latest public files
 
+-macro ajax_button(id_name, chevron_cls):
+  .flex-container.center-flex.h-100
+    .flex-container.center-flex.pointer.rounded-border id = {{ id_name }}
+      %i class = " fa {{ chevron_cls }}"
+
 -block extra
   .column.is-1
-    .flex-container.center-flex style = 'height: 100%;'
-      .flex-container.center-flex#load-less style = 'height: 45px;width: 45px;border-radius: 50%;box-shadow: 0 0 3px black;cursor: pointer;'
-        %i.fa.fa-chevron-left
+    = ajax_button('load-less', 'fa-chevron-left')
   -for column in latest_files|slice(5):
     .column.is-2
       -for media in column
         = gallery_file(media)
   .column.is-1
-    .flex-container.center-flex style = 'height: 100%;'
-      .flex-container.center-flex#load-more style = 'height: 45px;width: 45px;border-radius: 50%;box-shadow: 0 0 3px black;cursor: pointer;'
-        %i.fa.fa-chevron-right
+    = ajax_button('load-more', 'fa-chevron-right')
 
 -block footer
   .container

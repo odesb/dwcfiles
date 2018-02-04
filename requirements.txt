@@ -13,10 +13,12 @@ gunicorn==19.7.1
 hamlish-jinja==0.3.3
 itsdangerous==0.24        # via flask
 jinja2==2.10              # via flask, hamlish-jinja
+libsass==0.13.6
 markupsafe==1.0           # via jinja2
 pillow==5.0.0
 pymongo==3.6.0            # via flask-pymongo
 python-magic==0.4.15
+six==1.11.0               # via libsass
 webassets==0.12.1         # via flask-assets
 werkzeug==0.14.1          # via flask
 wtforms==2.1              # via flask-wtf

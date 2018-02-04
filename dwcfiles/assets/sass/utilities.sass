@@ -1,0 +1,108 @@
+/*
+ * Useful short CSS definitions (usually changes only one CSS property)
+ */
+
+/* Colors */
+// Box shadow
+.shadow
+  box-shadow: 2px 2px black
+
+
+/* Padding & margin */
+// Padding
+.p-1
+  padding: 1em
+
+.pt-1
+  padding-top: 1em
+
+.pb-1
+  padding-bottom: 1em
+
+// Margin
+.m-center
+  margin-left: auto
+  margin-right: auto
+
+.m-1
+  margin: 1em
+
+.mt-1
+  margin-top: 1em
+
+.mb-1
+  margin-bottom: 1em
+
+.mr-1
+  margin-right: 1em
+
+.ml-1
+  margin-left: 1em
+
+.mt-1-5
+  margin-top: 1.5em
+
+.mb-1-5
+  margin-bottom: 1.5em
+
+
+/* Display */
+.is-gone
+  display: none
+
+.spacer
+  // An empty 100px high div
+  height: 100px
+
+.h-100
+  height: 100%
+
+.w-100
+  width: 100%
+
+.mxw-100
+  max-width: 100%
+
+.no-outline
+  outline: 0
+
+  &:active, &:focus
+    outline: 0
+
+// Flex related definitions
+.flex-container
+  display: flex
+
+.center-flex
+  // To use with flex-container
+  align-items: center
+  justify-content: center
+
+
+/* Cursor */
+.pointer
+  cursor: pointer
+
+
+/* Border definitions */
+.rounded-border
+  border-radius: 50%
+
+
+/* Typography */
+.no-overflow
+  overflow: hidden
+
+.no-wrap
+  white-space: nowrap
+
+.break-word
+  word-wrap: break-word
+
+
+/* Table and table cells */
+.invis-border-cell
+  border-style: hidden !important // Has to be important else conflict with bulma
+
+.table-scroll
+  overflow-x: auto

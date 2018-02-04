@@ -4,5 +4,6 @@ Flask-PyMongo
 Flask-WTF
 gunicorn
 Hamlish-Jinja
+libsass
 Pillow
 python-magic

@@ -1,0 +1,38 @@
+/* CSS definitions for all views (base.haml) */
+
+/* Flashed messages */
+.flash
+  animation: fadein 2s
+
+@keyframes fadein
+  from
+    opacity: 0
+  to
+    opacity: 1
+
+
+/* Uploader */
+#uploader
+  position: absolute
+  z-index: 2
+  left: 50%
+  transform: translateX(-50%)
+  width: 650px
+
+  .field-custom
+    margin-bottom: 2em
+
+  input[type='checkbox']
+    margin-right: 5px
+
+
+#uploader-overlay
+  position: fixed
+  z-index: 1
+  background-color: rgba(0, 0, 0, 0.5)
+  top: 0
+  left: 0
+
+// Uploader trigger button
+a.toggle-uploader.button
+  margin-top: 0.80em

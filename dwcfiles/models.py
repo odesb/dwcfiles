@@ -1,10 +1,10 @@
 import io
+import magic
 import secrets
 import subprocess as sp
 import time
 from dwcfiles.utils import human_readable, retrieve_extension
 from PIL import Image
-from magic import from_buffer
 from werkzeug.utils import secure_filename
 
 
@@ -31,7 +31,20 @@ HTML5_FORMATS = [
 
 class UserFile:
     """Represents a file uploaded by a user
-    Can be any time of file (image/sound/binary/etc)
+    Can be any type of file (image/sound/binary/etc.)
+    Here are all its attributes saved to the MongoDB instance:
+
+    self.title       -- The title given to a file by the user
+    self.actualfile  -- The binary file provided
+    self.frontpage   -- Boolean that controls if the file should be on the home page
+    self.unique_id   -- A server generated ID used for its URL (e.g. /ul/<unique_id>)
+    self.upload_date -- The date and time when the file has been uploaded (based on UTC/GMT)
+    self.html5       -- Boolean that tells if the file can be used with HTML5 tags in the browser
+    self.pinned      -- Boolean that admins can use to pin/make files permanently first
+                        on the home page (not used currently)
+    self.mime_type   -- The file's mime_type, guessed by the server
+    self.filename    -- A filename composed of the unique_id and its original extension, used
+                        for the direct link to the file (not its details page)
     """
     def __init__(self, *args, **kwargs):
         self.title = kwargs['title']
@@ -59,7 +72,7 @@ class UserFile:
     def get_mime_type(self):
         """Retrieve mime type of the actual file
         """
-        m = from_buffer(self.actualfile.read(), mime=True)
+        m = magic.from_buffer(self.actualfile.read(), mime=True)
         self.actualfile.seek(0, 0)
         return m
 

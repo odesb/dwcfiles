@@ -18,13 +18,12 @@
             %video controls autoplay loop
               %source src = "{{ userfile_url }}" type = '{{ userfile.mime_type }}'
           -elif 'audio' in userfile.mime_type
-            ;.test
             .spacer.is-hidden-touch
-            %audio.audio controls
+            %audio.audio.w-100 controls
               %source src = "{{ userfile_url }}"
         .column.is-3
-          .content#info
-            %h3.title style = 'word-wrap: break-word;'
+          .content#info.mt-1-5
+            %h3.title.break-word
               = userfile.title
             %dl
               %dt.label

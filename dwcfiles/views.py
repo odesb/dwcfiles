@@ -8,7 +8,6 @@ from dwcfiles.forms import FileUploadForm
 from dwcfiles.models import UserFile
 from dwcfiles.utils import human_readable
 from flask import render_template, redirect, url_for, flash, request, abort, jsonify
-from flask_pymongo import DESCENDING
 
 
 MEME_SAYINGS = [
@@ -35,7 +34,7 @@ def transform(num_bytes):
 @app.route('/', methods=['GET', 'POST'])
 def home():
     """Home page view"""
-    form = FileUploadForm()
+    form = FileUploadForm() # Need to access the global form
     if form.validate_on_submit():
         # validate_on_submit verifies if it is a POST request and if form is valid
         userfile = UserFile(title=form.title.data,
@@ -51,7 +50,7 @@ def home():
         fs_info = shutil.disk_usage(app.config['DB_LOCATION']) # Retrieve filesystem info
                                                                # For home page bar
         context = {
-                'latest_files': mongo.db.userfiles.find({'frontpage': True}, limit=15, sort=[('_id', DESCENDING)]),
+                'latest_files': mongo.db.userfiles.find({'frontpage': True}, limit=15, sort=[('_id', -1)]), # Descending by _id
                 'used_space': transform(fs_info[1]),
                 'total_space': transform(fs_info[0]),
                 'percent_space': fs_info[1]/fs_info[0]*100,
@@ -64,7 +63,7 @@ def load_more():
     """View used to load more files on home page"""
     n = int(request.args.get('next'))
     context = {
-            'more': list(mongo.db.userfiles.find({'frontpage': True}, skip=15-3+n, limit=3, sort=[('_id', DESCENDING)]))
+            'more': list(mongo.db.userfiles.find({'frontpage': True}, skip=15-3+n, limit=3, sort=[('_id', -1)])) # Descending by _id
             }
     return render_template('more.haml', **context)
 
@@ -121,8 +120,7 @@ def api_collection():
         userfile = UserFile(**d)
         userfile.save_to_db(mongo)
         response = {
-                # request.host_url[:-1] means remove the trailing '/', because it would be
-                # there twice ('.com//ul/')
+                # request.host_url[:-1] is to remove the trailing '/' (e.g. '.com//ul/')
                 'url': '{0}{1}'.format(request.host_url[:-1], url_for('get_userfile', userfile_id=userfile.unique_id)),
                 'direct_url': '{0}{1}'.format(request.host_url[:-1], url_for('uploaded_file', filename=userfile.filename)),
                 }
