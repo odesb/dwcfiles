@@ -34,7 +34,8 @@
   .container
     .columns.is-centered
       .column.is-one-third.has-text-centered
-        %progress.progress.is-info.straight-border#fs-info value = {{ percent_space }} min = 0 max = 100
+        .mb-1 style = 'border: 1px solid grey;'
+          %progress.progress.is-info.straight-border.m-0#fs-info value = {{ percent_space }} min = 0 max = 100
         %p
           {{ used_space }} / {{ total_space }}
 
