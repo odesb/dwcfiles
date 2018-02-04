@@ -1,6 +1,11 @@
 # Vim swap files
 *.swp
 
+# CSS and JS compiled files
+dwcfiles/static/css/
+dwcfiles/static/js/
+dwcfiles/static/.webassets-cache/
+
 # Development folders
 db/
 virtenv/
