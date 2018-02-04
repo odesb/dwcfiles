@@ -18,9 +18,9 @@
             %video controls autoplay loop
               %source src = "{{ userfile_url }}" type = '{{ userfile.mime_type }}'
           -elif 'audio' in userfile.mime_type
-            .spacer.is-hidden-touch
-            %audio.audio.w-100 controls
-              %source src = "{{ userfile_url }}"
+            .flex-container.center-flex.h-100
+              %audio.audio.w-100 controls
+                %source src = "{{ userfile_url }}"
         .column.is-3
           .content#info.mt-1-5
             %h3.title.break-word
