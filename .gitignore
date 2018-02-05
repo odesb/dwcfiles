@@ -7,8 +7,6 @@ dwcfiles/static/js/
 dwcfiles/static/.webassets-cache/
 
 # Development folders
-db/
 virtenv/
 __pycache__/
 instance/
-dwcfiles.egg-info/
