@@ -5,11 +5,11 @@
         -if 'image' in userfile.mime_type:
           %img.shadow src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}"
         -elif 'audio' in userfile.mime_type:
-          %img.shadow.rounded-border src = '/static/img/icon-download5.png'
+          %img.shadow.rounded-border src = '/static/img/audio.png'
         -elif 'video' in userfile.mime_type:
           %img.shadow src = "{{ url_for('uploaded_file', filename=userfile.unique_id + '_thumb.png') }}"
         -else:
-          %img.shadow.rounded-border src = '/static/img/icon-download4.png'
+          %img.shadow.rounded-border src = '/static/img/file.png'
       %p.no-overflow.no-wrap.is-size-7
         = userfile.title
       %p.has-text-grey.no-overflow.no-wrap.is-size-7

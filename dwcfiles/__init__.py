@@ -13,6 +13,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class DefaultSettings:
     MONGO_HOST = 'localhost'
     DB_LOCATION = BASE_DIR
+    DEBUG = False
 
 
 app.config.from_object('dwcfiles.DefaultSettings')       # Development settings
