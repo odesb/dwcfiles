@@ -16,6 +16,7 @@ BUGS:
 - FFmpeg unspecified pixel format (When this happens, send to not multimedia category)
 - OSError: cannot identify image file <_io.BytesIO object at 0x7f29195b7bf8> with m4a upload
 - Rework filename/extension in api
+- If clicking too fast on AJAX request buttons, it multiplies the columns
 
 
 IN THE FUTURE:
